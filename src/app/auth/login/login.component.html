@@ -1,0 +1,30 @@
+<div>
+    <div>
+        
+        
+        <div>
+               
+            <div class="container-general">
+                
+                <h1 class="titulo-formulario"> Ingreso al sistema </h1>
+
+                <mat-form-field (keyup.enter)="login()" class="input-usuario">
+                    <mat-label> Usuario </mat-label>
+                    <input [(ngModel)]="dataLogin.username" matInput>
+                </mat-form-field>
+
+                <mat-form-field class="input-password">
+                    <mat-label> Contraseña </mat-label>
+                    <input [(ngModel)]="dataLogin.password" (keyup.enter)="login()" matInput [type]="hide ? 'password' : 'text'">
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <button (click)="login()" class="boton-ingresar" mat-raised-button color='primary'> Ingresar </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>

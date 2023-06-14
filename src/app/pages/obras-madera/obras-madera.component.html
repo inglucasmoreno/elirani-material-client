@@ -1,0 +1,515 @@
+
+<!-- Modal: Nuevo cliente -->
+<app-modal [showModal]="showModalCliente">
+  <div (keyup.enter)="nuevoCliente()">
+      <div class="modal-header">
+          <h1 class=" text-white px-2 py-1 rounded-t"> Nuevo cliente </h1>
+          <svg (click)="regresarObra()" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="cursor-pointer feather feather-x text-white mr-2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+      </div>
+      <div class="px-4 py-2 max-h-96 overflow-y-auto text-sm">
+          <div class="w-full md:flex md:items-center">
+              <div class="w-full">
+                  <p class="font-semibold"> <span class="text-red-500"> * </span> Nombre o Razón social </p>
+                  <input [(ngModel)]="descripcion_cliente"
+                      class="input-general"
+                      placeholder="Ej. Equinoccio Technology" type="text">
+              </div>
+          </div>
+          <div class="mt-4 w-full md:flex md:items-center">
+              <div class="md:w-1/2">
+                  <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de identificación </p>
+                  <select [(ngModel)]="tipo_identificacion"
+                      class="select-general">
+                      <option value="DNI"> DNI </option>
+                      <option value="CUIL"> CUIL </option>
+                      <option value="CUIT"> CUIT </option>
+                  </select>
+              </div>
+              <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+                  <p class="font-semibold"> Identificación </p>
+                  <input [(ngModel)]="identificacion"
+                      class="input-general"
+                      placeholder="Ej. 34060398" type="text">
+              </div>
+          </div>
+          <div class="mt-4 w-full md:flex md:items-center">
+              <div class="md:w-1/2">
+                  <p class="font-semibold"> <span class="text-red-500"> * </span> Telefono </p>
+                  <input [(ngModel)]="telefono" placeholder="Ej. 2664869642"
+                      class="input-general"
+                      type="text">
+              </div>
+              <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+                  <p class="font-semibold"> Direccion </p>
+                  <input [(ngModel)]="direccion_cliente"
+                      class="input-general"
+                      placeholder="Ej. Pringles 539" type="text">
+              </div>
+          </div>
+          <div *ngIf="clienteSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+              <div class="xl:w-1/2">
+                  <p class="font-semibold text-sm"> Fecha de alta </p>
+                  <div class="input-disabled">
+                      {{ clienteSeleccionado.createdAt | fecha }}
+                  </div>
+              </div>
+              <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
+                  <p class="font-semibold text-sm"> Usuario creador </p>
+                  <div class="input-disabled capitalize">
+                      {{ clienteSeleccionado.creatorUser?.apellido.toLowerCase() }} {{
+                      clienteSeleccionado.creatorUser?.nombre.toLowerCase() }}
+                  </div>
+              </div>
+          </div>
+          <div *ngIf="clienteSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+              <div class="xl:w-1/2">
+                  <p class="font-semibold text-sm"> Ultima actualización </p>
+                  <div class="input-disabled">
+                      {{ clienteSeleccionado.updatedAt | fecha }}
+                  </div>
+              </div>
+              <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
+                  <p class="font-semibold text-sm"> Usuario ultima actualización </p>
+                  <div class="input-disabled capitalize">
+                      {{ clienteSeleccionado.updatorUser?.apellido.toLowerCase() }} {{
+                      clienteSeleccionado.updatorUser?.nombre.toLowerCase() }}
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class=" pb-2 px-2">
+          <button (click)="nuevoCliente()"
+              class="btn-confirm mt-3">
+              Crear cliente </button>
+        </div>
+  </div>
+</app-modal>
+
+
+<!-- Modal: Crear / Editar obra -->
+<app-modal [showModal]="showModalObra">
+  <div (keyup.enter)="estadoFormulario === 'crear' ? nuevaObra() : actualizarObra()">
+    <div class="modal-header">
+      <h1 class="px-2 py-1 rounded-t"> {{ estadoFormulario == 'crear' ? 'Nueva obra' :
+        'Editando obra' }} </h1>
+      <svg (click)="showModalObra = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="cursor-pointer feather feather-x mr-2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
+    <div class="px-4 py-2 max-h-96 overflow-y-auto text-sm">
+      <div class="w-full md:flex md:items-center">        
+        <div *ngIf="!clienteSeleccionado" class="w-11/12 mb-2">
+          <div>
+            <p class="font-semibold"> 
+              <span class="text-red-700"> * </span>
+              <span>
+                Seleccionar cliente 
+              </span>
+            </p>
+
+            <div class="flex items-center mt-2">
+              <input [(ngModel)]="filtro.parametroCliente" type="text" (focus)="showOptionsClientes = true" class="border shadow border-gray-400 p-2 w-96 focus:outline-none" placeholder="Buscar cliente">
+              <button (click)="abrirModalNuevoCliente()" title="Nuevo cliente"  class="p-2 ml-2 focus:outline-none bg-gray-100 border border-gray-400 hover:text-secondaryColor">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>                  
+              </button>
+            </div>
+            
+            <div class="bg-white border mt-2 text-center border-gray-400 absolute w-11/12" *ngIf="showOptionsClientes">
+              
+              <div class="bg-gray-100 p-2 px-4 flex items-center justify-between border-b border-gray-400">
+                <p class="font-semibold"> Listado de clientes </p>
+                <button (click)="showOptionsClientes = false" class="focus:outline-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>                
+                </button>
+              </div>
+              
+              <div class="max-h-60 overflow-y-auto">
+                <div (click)="seleccionarCliente(cliente)" class="cursor-pointer border-b text-left hover:bg-gray-100 p-2 text-sm" *ngFor="let cliente of clientes | filtroClientes:filtro.parametroCliente:'true'"> 
+                  <div class="flex items-center">
+                    <img class="w-10" src="assets/img/cliente.svg">
+                    <div class="ml-2">
+                      <p class="text-xs md:text-sm"> {{ cliente.descripcion }} </p>
+                      <p *ngIf="cliente.identificacion !== ''" class="text-xs text-gray-500"> {{ cliente.tipo_identificacion }} {{ cliente.identificacion }} </p>
+                      <p *ngIf="cliente.identificacion === ''" class="text-xs text-gray-500"> Sin identificación </p>                    
+                    </div> 
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            
+          </div>  
+        </div>
+        
+        <!-- Cliente seleccionado -->
+        <div *ngIf="clienteSeleccionado" class="border shadow flex items-center justify-between border-gray-400 w-full p-2">
+          <div class="flex items-center">
+            <img src="assets/img/cliente.svg" class="w-10 md:w-20">
+            <div class="ml-4">
+              <p class="font-semibold text-xs md:text-sm"> {{ clienteSeleccionado.descripcion }} </p>
+              <p *ngIf="clienteSeleccionado.identificacion !== ''" class="text-xs md:text-sm"> <span class="font-semibold"> {{ clienteSeleccionado?.tipo_identificacion }} </span> {{ clienteSeleccionado?.identificacion }} </p>
+              <p class="text-sm text-gray-500"> Sin identificación </p>
+            </div>
+          </div>
+          <button (click)="eliminarCliente()" title="Buscar otro cliente" class="p-2 mr-2 rounded bg-gray-100 hover:text-red-700 focus:outline-none border border-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>                         
+          </button>
+        </div>
+      
+      </div>
+
+      <div class="mt-2 w-full md:flex md:items-center">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Número de obra </p>
+          <input [(ngModel)]="codigo"
+            placeholder="Ej. 23"
+            class="input-general"
+            type="text">
+        </div>
+        <div class="md:w-1/2 md:ml-3 mt-4 md:mt-0"></div>
+      </div>
+
+      <div class="mt-4 w-full md:flex md:items-center">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Fecha de inicio </p>
+          <input [disabled]="true" [(ngModel)]="fecha_inicio"
+            class="input-general"
+            type="date">
+        </div>
+        <div class="md:w-1/2 md:ml-3 mt-4 md:mt-0">
+          <p class="font-semibold"> Fecha de colocación </p>
+          <input [(ngModel)]="fecha_finalizacion_estimada"
+            [min]="LIMITE_FECHA_FINALIZACION"
+            class="input-general"
+            type="date">
+        </div>
+      </div>
+      
+      <div class="w-full md:flex mt-4 md:items-center">
+        <div class="w-full">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Dirección </p>
+          <input [(ngModel)]="direccion"
+            class="input-general"
+            placeholder="Colocar dirección" type="text">
+        </div>
+      </div>
+
+      <div class="w-full md:flex mt-4 md:items-center">
+        <div class="w-full">
+          <p class="font-semibold"> Observaciones </p>
+          <input [(ngModel)]="descripcion"
+            class="input-general"
+            placeholder="Obsevaciones opcionales" type="text">
+        </div>
+      </div>
+      
+      <div *ngIf="obraSeleccionada && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+        <div class="xl:w-1/2">
+          <p class="font-semibold text-sm"> Fecha de alta </p>
+          <div class="input-disabled">
+            {{ obraSeleccionada.createdAt | fecha }}
+          </div>
+        </div>
+        <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
+          <p class="font-semibold text-sm"> Usuario creador </p>
+          <div class="input-disabled capitalize">
+            {{ obraSeleccionada.creatorUser?.apellido.toLowerCase() }} {{
+            obraSeleccionada.creatorUser?.nombre.toLowerCase() }}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="obraSeleccionada && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+        <div class="xl:w-1/2">
+          <p class="font-semibold text-sm"> Ultima actualización </p>
+          <div class="input-disabled">
+            {{ obraSeleccionada.updatedAt | fecha }}
+          </div>
+        </div>
+        <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
+          <p class="font-semibold text-sm"> Usuario ultima actualización </p>
+          <div class="input-disabled capitalize">
+            {{ obraSeleccionada.updatorUser?.apellido.toLowerCase() }} {{
+            obraSeleccionada.updatorUser?.nombre.toLowerCase() }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-2">
+      <button *ngIf="estadoFormulario == 'crear'" (click)="nuevaObra()"
+        class="btn-confirm">
+        Crear obra </button>
+      <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarObra()"
+        class="btn-confirm">
+        Actualizar obra </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Listado de obras -->
+<div class="md:max-w-7xl mx-auto">
+  <app-tarjeta-lista>
+    <div class="container mx-auto">
+      <div>
+        <div class="flex items-center justify-between bg-gray-800 px-4 py-3">
+          <div class="ml-2 text-white">
+            <h2 class="text-xl md:text-2xl leading-tight">
+              Obras (Madera)
+            </h2>
+            <p> Total de obras: {{ totalItems }} </p>
+          </div>
+          <div>
+            <button *appPermisos="['MADERA_ALL']" title="Nueva obra" (click)="abrirModal('crear')" class="btn-tabla-nuevo">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>                      
+            </button>
+          </div>
+        </div>
+        <div class="md:flex md:items-center md:justify-between px-4 py-2">
+          <div class="my-2 flex sm:flex-row flex-col">
+            <div class="flex flex-row mb-1 sm:mb-0">
+              <div class="relative">
+                <select [(ngModel)]="filtro.estado" (change)="cambiarPagina(1)"
+                  class="h-full text-sm border-t border-l sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white">
+                  <option value='Pendiente'> Pendiente </option>
+                  <option value='Produccion'> Producción </option>
+                  <option value='Colocacion'> Colocación </option>
+                  <option value='Finalizada'> Finalizada </option>
+                  <option value=''> Todas </option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="block relative">
+              <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                <svg viewBox="0 0 24 24"
+                  class="h-4 w-4 fill-current text-gray-500 cursor-pointer hover:text-secondary-500">
+                  <path
+                    d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                  </path>
+                </svg>
+              </span>
+              <input placeholder="Buscar" [(ngModel)]="filtro.parametro" (change)="cambiarPagina(1)"
+                class="appearance-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none" />
+            </div>
+            <select (change)="cambiarPagina(1)"
+              class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400"
+              [(ngModel)]="cantidadItems">
+              <option value="10"> 10 elementos </option>
+              <option value="20"> 20 elementos </option>
+              <option value="50"> 50 elementos </option>
+              <option value="100"> 100 elementos </option>
+            </select>
+          </div>
+        </div>
+        <div class="px-4 py-2 overflow-x-auto">
+          <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
+            <table class="min-w-full leading-normal">
+              <thead>
+                  <tr class="border">
+                    <th
+                    class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('id')"
+                      class="cursor-pointer w-max flex items-center focus:outline-none">
+                      <span> Código de obra </span>
+                      <span class="ml-2 text-gray-600">
+                        <svg *ngIf="ordenar.columna == 'id' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'id' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'id'" width="15" height="15" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('cliente')"
+                      class="cursor-pointer flex items-center focus:outline-none">
+                      <span> Cliente </span>
+                      <span class="ml-2 text-gray-600">
+                        <svg *ngIf="ordenar.columna == 'cliente' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'cliente' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'cliente'" width="15" height="15" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('fecha_inicio')"
+                      class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                      <span>
+                        Inicio
+                      </span>
+                      <span class="ml-2">
+                        <svg *ngIf="ordenar.columna == 'fecha_inicio' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'fecha_inicio' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'fecha_inicio'" width="15" height="15" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                  class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                  <div (click)="ordenarPorColumna('fecha_finalizacion_estimada')"
+                    class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                    <span>
+                      Colocación (Estimada)
+                    </span>
+                    <span class="ml-2">
+                      <svg *ngIf="ordenar.columna == 'fecha_finalizacion_estimada' && ordenar.direccion == 1" width="15" height="15"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                      <svg *ngIf="ordenar.columna == 'fecha_finalizacion_estimada' && ordenar.direccion == -1" width="15" height="15"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-chevron-up">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      <svg *ngIf="ordenar.columna != 'fecha_finalizacion_estimada'" width="15" height="15" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-minus">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </span>
+                  </div>
+                </th>
+                  <th
+                    class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('estado')"
+                      class="cursor-pointer flex items-center focus:outline-none">
+                      <span>
+                        Estado
+                      </span>
+                      <span class="ml-2">
+                        <svg *ngIf="ordenar.columna == 'estado' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'estado' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'estado'" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <!-- <th
+                    class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                    Acción
+                  </th> -->
+                </tr>
+              </thead>
+              <tbody *ngIf="obras">
+                <tr [routerLink]="['/dashboard/obras-madera/detalles', obra.id ]" class="animate__animated animate__fadeIn cursor-pointer hover:bg-gray-100"
+                  *ngFor="let obra of obras | paginate: { itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems }">
+                  <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                      {{ obra.codigo | codigoMadera }}
+                    </p>
+                  </td>
+                  <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                      {{ obra.cliente.descripcion }}
+                    </p>
+                  </td>
+                  <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 whitespace-no-wrap">
+                      {{ obra.fecha_inicio | fecha }}
+                    </p>
+                  </td>
+                  <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 whitespace-no-wrap">
+                      {{ obra.fecha_finalizacion_estimada | fecha }}
+                    </p>
+                  </td>
+                  <td  
+                    class="px-5 py-2 border-b border-gray-200 text-xs">
+                    <span class="p-1 border rounded" [ngClass]="{'bg-yellow-100 border-yellow-300' : obra.estado === 'Pendiente', 'bg-orange-100 border-orange-300' : obra.estado === 'Produccion', 'bg-blue-100 border-blue-300' : obra.estado === 'Colocacion', 'bg-green-100 border-green-300' : obra.estado === 'Finalizada'}">
+                      {{ obra.estado }}
+                    </span>
+                  </td>
+                  <!-- <td class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                    <span class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                      <button class="btn-tabla-accion" title="Editar obra" (click)="abrirModal('editar', obra)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                        </svg>
+                      </button>
+                      <button [routerLink]="[ '/dashboard/obras-madera/detalles', obra.id ]" class="btn-tabla-accion ml-2" title="Detalles de obra">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                        </svg>  
+                      </button>
+                    </span>
+                  </td> -->
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div
+        class="px-5 py-5 mt-4 text-sm bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+        <pagination-controls nextLabel="Siguiente" previousLabel="Anterior"
+          (pageChange)="cambiarPagina($event)"></pagination-controls>
+      </div>
+    </div>
+  </app-tarjeta-lista>
+</div>

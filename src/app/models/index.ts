@@ -1,0 +1,1 @@
+export { UsuarioOnline } from './usuarioOnline.model';

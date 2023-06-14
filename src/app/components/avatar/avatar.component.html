@@ -1,0 +1,26 @@
+<div *ngIf="role === 'ADMIN_ROLE'" [ngClass]="{'w-10 h-10':destino==='tabla', 'w-32 h-32':destino==='general'}"
+  class="bg-blue-100 pb-1 flex items-center justify-center w-32 h-32 rounded-full shadow border border-blue-400">
+  <p [ngClass]="{'text-lg':destino==='tabla'}" class="text-6xl font-semibold text-blue-900">
+    R
+  </p>
+</div>
+<div *ngIf="role === 'ADMINISTRATIVO_ROLE'" [ngClass]="{'w-10 h-10':destino==='tabla', 'w-32 h-32':destino==='general'}"
+  class="bg-green-100 flex items-center justify-center w-32 h-32 rounded-full shadow border border-green-500">
+  <p [ngClass]="{'text-lg':destino==='tabla'}" class="text-6xl font-semibold text-green-700 pb-1">
+    A
+  </p>
+</div>
+<div *ngIf="role === 'MADERA_ROLE'" [ngClass]="{'w-10 h-10':destino==='tabla', 'w-32 h-32':destino==='general'}"
+  class="bg-orange-100 flex items-center justify-center w-32 h-32 rounded-full shadow border border-orange-400">
+  <p [ngClass]="{'text-lg':destino==='tabla'}" class="text-6xl font-semibold text-orange-500">
+    <span>E</span>
+    <span [ngClass]="{'text-sm':destino==='tabla', 'text-5xl':destino==='general'}">m</span>
+  </p>
+</div>
+<div *ngIf="role === 'ALUMINIO_ROLE'" [ngClass]="{'w-10 h-10':destino==='tabla', 'w-32 h-32':destino==='general'}"
+  class="bg-indigo-100 flex items-center justify-center w-32 h-32 rounded-full shadow border border-indigo-400">
+  <p [ngClass]="{'text-lg':destino==='tabla'}" class="text-6xl font-semibold text-indigo-700">
+    <span>E</span>
+    <span [ngClass]="{'text-sm':destino==='tabla', 'text-5xl':destino==='general'}">a</span>
+  </p>
+</div>

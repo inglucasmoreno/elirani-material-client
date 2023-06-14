@@ -1,0 +1,28 @@
+// @tailwind base;
+// @tailwind components;
+// @tailwind utilities;
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+/* Para evitar cuadro azul en celular al hacer clic */
+
+// a {
+//   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+// }
+
+// button {
+//   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+// }
+
+// div {
+//   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+// }
+
+// i {
+//   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+// }
+
+/* --- ESTILOS FORMULARIOS --- */
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

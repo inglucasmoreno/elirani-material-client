@@ -1,0 +1,240 @@
+<!-- Modal: Permisos -->
+<app-modal [showModal]="showModalPermisos">
+    <div>
+        <div class="modal-header">
+            <h1 class=" text-white px-2 py-1"> Permisos de usuario </h1>
+            <button (click)="showModalPermisos = false">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    class="cursor-pointer feather feather-x text-white mr-2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="max-h-96 overflow-y-auto text-sm px-4 py-2">
+            <p class="p-1 border bg-gray-100 border-gray-400 font-semibold text-center"> Secciones </p>
+            <div class="p-2">
+                <div class="w-full md:flex md:items-center ">
+                    <div class="md:w-1/2">
+                        <p class="font-semibold"> Clientes </p>
+                        <select [(ngModel)]="permisos.clientes"
+                            class="border focus:outline-none w-full border-gray-400 mt-2 p-2">
+                            <option value="CLIENTES_ALL"> Permiso total </option>
+                            <option value="CLIENTES_READ"> Solo lectura </option>
+                            <option value="CLIENTES_NOT"> Sin acceso </option>
+                        </select>
+                    </div>
+                    <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+                        <p class="font-semibold"> Madera </p>
+                        <select [(ngModel)]="permisos.madera"
+                            class="border w-full focus:outline-none border-gray-400 mt-2 p-2">
+                            <option value="MADERA_ALL"> Permiso total </option>
+                            <option value="MADERA_READ"> Solo lectura </option>
+                            <option value="MADERA_NOT"> Sin acceso </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <p class="p-1 mt-3 border bg-gray-100 border-gray-400 font-semibold text-center"> Configuraciones </p>
+            <div class="p-2">
+                <div class="w-full md:flex md:items-center ">
+                    <div class="md:w-1/2">
+                        <p class="font-semibold"> Generales </p>
+                        <select [(ngModel)]="permisos.config_generales"
+                            class="border focus:outline-none w-full border-gray-400 mt-2 p-2">
+                            <option value="CONFIG_GENERALES_ALL"> Permiso total </option>
+                            <option value="CONFIG_GENERALES_READ"> Solo lectura </option>
+                            <option value="CONFIG_GENERALES_NOT"> Sin acceso </option>
+                        </select>
+                    </div>
+                    <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+                        <p class="font-semibold"> Madera </p>
+                        <select [(ngModel)]="permisos.config_madera"
+                            class="border w-full focus:outline-none border-gray-400 mt-2 p-2">
+                            <option value="CONFIG_MADERA_ALL"> Permiso total </option>
+                            <option value="CONFIG_MADERA_READ"> Solo lectura </option>
+                            <option value="CONFIG_MADERA_NOT"> Sin acceso </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-confirm mt-3">
+                Regresar
+            </button>
+        </div>
+    </div>
+</app-modal>
+
+<!-- Pagina actual -->
+<div class="lg:flex p-4 gsap-contenido max-w-5xl mx-auto">
+
+    <div class="w-full lg:w-1/2 bg-white mr-2 shadow">
+
+        <!-- Cuerpo de formulario -->
+        <div [formGroup]="usuarioForm" class="">
+            <div class="flex items-center p-2 bg-gray-800 border border-gray-800">
+                <app-boton-regresar routerLink="/dashboard/usuarios"></app-boton-regresar>
+                <h1 class="ml-2 text-xl text-white"> Datos de usuario </h1>
+            </div>
+            <div class="px-4 border border-gray-400 p-2">
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold bold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Nombre de usuario
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input placeholder="Ej. lmoreno"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm"
+                                formControlName="usuario">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Email
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input type="email" formControlName="email" placeholder="Ej. lucasmoreno@gmail.com"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Apellido
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input placeholder="Ej. Moreno" formControlName="apellido"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Nombre
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input placeholder="Ej. Lucas" formControlName="nombre"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> DNI
+                        </div>
+                        <div class="bg-white mt-2 p-1 flex">
+                            <input placeholder="Ej. 34060398" formControlName="dni"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-2 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Rol
+                        </div>
+                        <div class="bg-white my-2 flex">
+                            <select (change)="cambiarRol()"
+                                class="bg-white tranform duration-500 focus:border-secondaryColor p-1 py-2 w-full text-sm border-b-2 outline-none"
+                                formControlName="role">
+                                <option value="ADMIN_ROLE"> Root </option>
+                                <option value="ADMINISTRATIVO_ROLE"> Administrativo </option>
+                                <option value="MADERA_ROLE"> Empleado - Madera </option>
+                                <option value="ALUMINIO_ROLE"> Empleado - Aluminio </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row mt-2">
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Contraseña
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input type="password" formControlName="password" placeholder="******"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Repetir contraseña
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input type="password" formControlName="repetir" placeholder="******"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row mt-2">
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Estado
+                        </div>
+                        <div class="bg-white my-2 flex">
+                            <select
+                                class="bg-white tranform duration-500 focus:border-secondaryColor p-1 py-2 w-full text-sm border-b-2 outline-none"
+                                formControlName="activo">
+                                <option value=true> Activo </option>
+                                <option value=false> Inactivo </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1">
+                        <div *ngIf="usuarioForm.value.role !== 'ADMIN_ROLE'">
+                            <div class="font-semibold mt-2 text-gray-600 text-sm">
+                                <span class="text-red-500"> * </span> Permisos
+                            </div>
+                            <button (click)="abrirPermisos()"
+                                class="p-2 mt-2 bg-gray-800 w-full text-sm rounded text-white shadow">
+                                Configurar permisos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full lg:w-1/2 mt-2 lg:mt-0 h-full">
+        <!-- Creacion de usuario -->
+        <div class="bg-white border shadow border-gray-400 p-4">
+            <div class="flex mb-2">
+                <app-avatar [role]="usuarioForm.value.role"></app-avatar>
+                <div class="ml-4 mt-2">
+                    <div class="mt-1">
+
+                        <!-- Usuario de sistema -->
+                        <div class="text-xl lg:text-3xl">
+                            <p *ngIf="usuarioForm.value.usuario.trim() !== ''" class="font-semibold"> {{
+                                usuarioForm.value.usuario }} </p>
+                            <p class="text-gray-400" *ngIf="usuarioForm.value.usuario.trim() == ''"> Nombre de usuario
+                            </p>
+                        </div>
+
+                        <!-- Apellido y Nombre -->
+                        <div class="text-md lg:text-2xl">
+                            <p *ngIf="usuarioForm.value.nombre.trim() || usuarioForm.value.apellido.trim()"
+                                class="capitalize"> {{ usuarioForm.value.nombre.toLowerCase() }} {{
+                                usuarioForm.value.apellido.toLowerCase() }} </p>
+                            <p class="text-gray-400"
+                                *ngIf="usuarioForm.value.nombre.trim() == '' && usuarioForm.value.apellido.trim() == ''">
+                                Apellido y Nombre </p>
+                        </div>
+
+                        <!-- Correo electronico -->
+                        <div class="text-xs lg:text-lg text-gray-400">
+                            <p *ngIf="usuarioForm.value.email.trim() !== ''"> {{ usuarioForm.value.email.toLowerCase()
+                                }} </p>
+                            <p *ngIf="usuarioForm.value.email.trim() == ''"> Correo electrónico </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <button (click)="nuevoUsuario()" class="btn-confirm mt-2">
+                Crear este usuario
+            </button>
+        </div>
+
+    </div>
+</div>
