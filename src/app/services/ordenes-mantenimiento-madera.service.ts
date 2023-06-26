@@ -34,10 +34,10 @@ export class OrdenesMantenimientoMaderaService {
   
   // Listar ordenes
   listarOrdenes(parametros?: any): Observable<any> {
-    console.log(parametros);
     return this.http.get(`${base_url}/ordenes-mantenimiento-madera`, {
       params: {
         direccion: parametros?.direccion || 1,
+        obra_madera: parametros?.obra_madera || '',
         columna: parametros?.columna || 'createdAt',
         activo: parametros?.activo || '',
         parametro: parametros?.parametro || '',
@@ -49,7 +49,7 @@ export class OrdenesMantenimientoMaderaService {
   }
 
   // Imprimir orden
-  imprimirOrden(id: number = 0): Observable<any> {
+  imprimirOrden(id: number): Observable<any> {
     return this.http.get(`${base_url}/ordenes-mantenimiento-madera/imprimir/${id}`, {
       headers: this.getToken
     });

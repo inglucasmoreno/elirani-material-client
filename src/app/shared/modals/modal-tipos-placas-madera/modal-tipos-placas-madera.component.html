@@ -1,0 +1,27 @@
+<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nuevo tipo de placa' : 'Editando tipo de placa' }} </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Código </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearTipo() : actualizarTipo()" [(ngModel)]="dataOutput.codigo"
+      matInput #input placeholder="Ej. BG0002">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Descripción </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearTipo() : actualizarTipo()"
+      [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Aluminio">
+  </mat-form-field>
+
+  <mat-slide-toggle [(ngModel)]="dataOutput.activo">
+    {{ dataOutput.activo ? 'Tipo activo' : 'Tipo inactivo' }}
+  </mat-slide-toggle>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearTipo() : actualizarTipo()" mat-raised-button color="primary"> {{
+    dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

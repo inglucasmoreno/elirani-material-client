@@ -1,0 +1,14 @@
+.contenedor-principal {
+  display: flex;
+  align-items: center;
+  // height: 100vh;
+  flex-direction: column;
+}
+
+.contenedor-descripcion {
+  text-align: center;
+}
+
+.logo {
+  width: 50%;
+}

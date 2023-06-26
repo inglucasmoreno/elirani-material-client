@@ -1,0 +1,44 @@
+<div style="display: flex; align-items: center; justify-content: space-between;">
+  <h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nueva orden' : 'Editando orden' }} </h1>
+  <div *ngIf="dataInput.accion === 'Editar'" style="display: flex; margin-right: 10px;">
+    <span (click)="eliminarOrden()" title="Eliminar Orden" class="header-boton-warning">
+      <mat-icon> delete </mat-icon>
+    </span>
+    <span (click)="imprimirOrden()" title="Imprimir orden" class="header-boton-normal">
+      <mat-icon> print </mat-icon>
+    </span>
+  </div>
+</div>
+
+<div class="modal-body" mat-dialog-content>
+
+  <ng-select [disabled]="parametrosFijos" [(ngModel)]="dataOutput.obra_madera" class="custom-ng-select" placeholder="Obra">
+    <ng-option *ngFor="let obra of obras" [value]="obra.id">{{ (obra.codigo | codigoMadera) + ' - ' + obra.cliente.descripcion }} </ng-option>
+  </ng-select>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Fecha </mat-label>
+    <input [(ngModel)]="dataOutput.fecha" matInput [matDatepicker]="fecha_inicio">
+    <mat-datepicker-toggle matIconSuffix [for]="fecha_inicio"></mat-datepicker-toggle>
+    <mat-datepicker #fecha_inicio></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field floatLabel="always">
+    <mat-label> Precio </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearOrden() : actualizarOrden()" [(ngModel)]="dataOutput.precio" matInput type="number" class="example-right-align" placeholder="0">
+    <span matTextPrefix>$&nbsp;</span>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> Observaciones </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearOrden() : actualizarOrden()"
+      [(ngModel)]="dataOutput.observaciones" matInput #input placeholder="Ej. Trabajos sobre puerta principal">
+  </mat-form-field>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearOrden() : actualizarOrden()" mat-raised-button color="primary">
+    {{ dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

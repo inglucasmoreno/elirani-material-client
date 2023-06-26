@@ -1,0 +1,67 @@
+
+<h1 mat-dialog-title> Mi perfil </h1>
+<div class="modal-body" mat-dialog-content>
+
+  <mat-divider style="margin-bottom: 20px;"></mat-divider>
+
+  <h4 class="subtitle"> 
+    <mat-icon> person </mat-icon>
+    <span style="margin-left: 5px;">
+      {{ usuarioLogin.apellido }} {{ usuarioLogin.nombre }} ({{ usuarioLogin.usuario }})
+    </span>
+  </h4>
+
+  <h4 class="subtitle"> 
+    <mat-icon> badge </mat-icon>
+    <span style="margin-left: 5px;">
+      DNI {{ usuarioLogin.dni }}
+    </span>
+  </h4>
+
+  <h4 class="subtitle"> 
+    <mat-icon> email </mat-icon>
+    <span style="margin-left: 5px;">
+      {{ usuarioLogin.email }}
+    </span>
+  </h4>
+
+  <mat-divider></mat-divider>
+
+  <mat-form-field style="margin-top: 15px;" class="input-password">
+    <mat-label> <span style="color: red"> * </span> Contraseña actual </mat-label>
+    <input [(ngModel)]="dataOutput.password_actual"
+      (keyup.enter)="actualizarPassword()" matInput
+      [type]="hidePasswordActual ? 'password' : 'text'">
+    <button mat-icon-button matSuffix (click)="hidePasswordActual = !hidePasswordActual" [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hidePasswordActual">
+      <mat-icon>{{hidePasswordActual ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field class="input-password">
+    <mat-label> <span style="color: red"> * </span> Nueva contraseña </mat-label>
+    <input [(ngModel)]="dataOutput.password_nuevo"
+      (keyup.enter)="actualizarPassword()" matInput
+      [type]="hidePasswordNuevo ? 'password' : 'text'">
+    <button mat-icon-button matSuffix (click)="hidePasswordNuevo = !hidePasswordNuevo" [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hidePasswordNuevo">
+      <mat-icon>{{hidePasswordNuevo ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field class="input-password">
+    <mat-label> <span style="color: red"> * </span> Repetir contraseña </mat-label>
+    <input [(ngModel)]="dataOutput.password_nuevo_repetir"
+      (keyup.enter)="actualizarPassword()" matInput
+      [type]="hidePasswordNuevoRepetir ? 'password' : 'text'">
+    <button mat-icon-button matSuffix (click)="hidePasswordNuevoRepetir = !hidePasswordNuevoRepetir" [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hidePasswordNuevoRepetir">
+      <mat-icon>{{hidePasswordNuevoRepetir ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="actualizarPassword()" mat-raised-button color="primary"> Actualizar </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

@@ -1,0 +1,16 @@
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-modal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.footer-modal button {
+  width: calc(50% - 5px);
+}

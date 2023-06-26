@@ -1,0 +1,65 @@
+
+.header-modal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-container-iconos {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.header-icono {
+  color: rgb(44, 44, 44);
+}
+
+.header-icono-delete {
+  color: rgb(44, 44, 44);
+  margin-left: 10px;
+}
+
+.header-icono:hover {
+  color: #673AB7;
+  cursor: pointer;
+}
+
+.header-icono-delete:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.header-icono-seleccionado {
+  color: #673AB7; 
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.container-form-placa {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.container-placas {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid gray;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.footer-modal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.footer-modal button {
+  width: calc(50% - 5px);
+}

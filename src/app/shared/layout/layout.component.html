@@ -1,0 +1,108 @@
+<!-- Header -->
+<mat-toolbar class="header" color="primary">
+  <button (click)="drawer.toggle()" mat-icon-button class="example-icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>El Irani</span>
+  <span class="header-spacer"></span>
+  <button mat-icon-button>
+    <mat-icon>notifications</mat-icon>
+  </button>  
+  <button mat-icon-button [matMenuTriggerFor]="menu_usuario" aria-label="Example icon-button with a menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu_usuario="matMenu">
+    
+    <mat-list-item class="header-menu-container"> 
+      <p class="header-usuario"> {{ authService.usuario.apellido }} {{ authService.usuario.nombre }} </p>
+      <p class="header-role"> {{ authService.usuario.role | rol }} </p>
+    </mat-list-item>
+    
+    <mat-divider></mat-divider>
+
+    <button (click)="openModalPerfil()" mat-menu-item>
+      <mat-icon> account_circle </mat-icon>
+      <span>Mi perfil</span>
+    </button>
+    <button (click)="logout()" mat-menu-item>
+      <mat-icon> logout </mat-icon>
+      <span> Cerrar sesion </span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<mat-drawer-container class="example-container" autosize>
+
+  <!-- Sidebar -->
+  <mat-drawer #drawer class="sidebar" mode="over">
+    <mat-nav-list>
+      
+      <mat-list-item (click)="drawer.toggle()" routerLink="/dashboard/home"> 
+        Home 
+      </mat-list-item>
+      
+      <mat-divider></mat-divider>
+
+      <mat-list-item *appPermisos="permisoNavClientes" (click)="drawer.toggle()" routerLink="/dashboard/clientes"> 
+        Clientes 
+      </mat-list-item>
+      
+      <mat-divider></mat-divider>
+
+      <mat-list-item *appPermisos="permisoNavMadera" [matMenuTriggerFor]="menu"> 
+        Obras madera
+        <mat-menu #menu="matMenu">
+          <button (click)="drawer.toggle()" routerLink="/dashboard/obras-madera"  mat-menu-item>
+            <mat-icon> list </mat-icon>
+            <span> Listado de obras </span>
+          </button>
+          <button (click)="drawer.toggle()" routerLink="/dashboard/ordenes-mantenimiento-madera" mat-menu-item>
+            <mat-icon> receipt_long </mat-icon>
+            <span>Ordenes de mantenimiento</span>
+          </button>
+        </mat-menu>
+      </mat-list-item>
+
+      <mat-divider></mat-divider>
+
+      <mat-list-item *appPermisos="permisoNavConfig" [matMenuTriggerFor]="configuraciones"> 
+        Configuraciones
+
+        <mat-menu #configuraciones="matMenu">
+          <button *appPermisos="permisoNavConfigGenerales" mat-menu-item [matMenuTriggerFor]="generales"> Generales </button>
+          <button *appPermisos="permisoNavConfigMadera" mat-menu-item [matMenuTriggerFor]="obras_madera"> Obras madera </button>
+        </mat-menu>
+        
+        <mat-menu #generales="matMenu">
+          <button (click)="drawer.toggle()" routerLink="/dashboard/usuarios" mat-menu-item>
+            <mat-icon> person </mat-icon>
+            Usuarios
+          </button>
+        </mat-menu>
+        
+        <mat-menu #obras_madera="matMenu">
+          <button mat-menu-item (click)="drawer.toggle()" routerLink="/dashboard/tipos-muebles"> 
+            <mat-icon> table_bar </mat-icon>
+            Tipos de muebles 
+          </button>
+          <button mat-menu-item (click)="drawer.toggle()" routerLink="/dashboard/tipos-placas"> 
+            <mat-icon> rectangle </mat-icon>
+            Tipos de placas 
+          </button>
+          <button mat-menu-item (click)="drawer.toggle()" routerLink="/dashboard/obras-madera-motivos-pases"> 
+            <mat-icon> swap_horiz </mat-icon>
+            Motivos de pases 
+          </button>
+        </mat-menu>
+
+      </mat-list-item>
+
+      <mat-divider></mat-divider>
+    
+    </mat-nav-list>
+  </mat-drawer>
+
+  <!-- Contenido de la pagina -->
+  <ng-content></ng-content>
+
+</mat-drawer-container>

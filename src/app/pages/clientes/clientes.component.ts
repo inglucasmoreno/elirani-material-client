@@ -1,8 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { DataService } from 'src/app/services/data.service';
+import { ModalClientesComponent } from 'src/app/shared/modals/modal-clientes/modal-clientes.component';
 
 @Component({
   selector: 'app-clientes',
@@ -11,34 +17,23 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class ClientesComponent implements OnInit {
 
-  // Modal
-  public showModalCliente: boolean = false;
+  public permisosTotales = ['CLIENTES_ALL'];
+  public displayedColumns: string[] = ['opciones','descripcion', 'identificacion', 'telefono', 'createdAt', 'activo'];
+  public dataSource = new MatTableDataSource<any>();
 
-  // Estado formulario 
-  public estadoFormulario: string = 'crear';
+  public resultsLength = 0;
+  public isLoadingResults = true;
+  public isRateLimitReached = false;
 
-  // Cliente
-  public idCliente: number = 0;
+  // Clientes
   public clientes: any = [];
-  public clienteSeleccionado: any;
-
-  // DataForm - Cliente
-  public descripcion: string = ''; // Razon social
-  public tipo_identificacion: string = 'DNI';
-  public identificacion: string = '';
-  public telefono: string = '';
-  public direccion: string = '';
-  public email: string = '';
 
   // Paginacion
   public totalItems: number = 0;
-  public desde: number = 0;
-  public paginaActual: number = 1;
-  public cantidadItems: number = 10;
 
   // Filtrado
   public filtro = {
-    activo: 'true',
+    activo: '',
     parametro: ''
   }
 
@@ -49,229 +44,100 @@ export class ClientesComponent implements OnInit {
   }
 
   constructor(
+    public dialog: MatDialog,
     private clientesService: ClientesService,
-    private authService: AuthService,
     private alertService: AlertService,
-    private dataService: DataService
+    private dataService: DataService,
+    private _liveAnnouncer: LiveAnnouncer
   ) { }
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
     this.dataService.ubicacionActual = 'Dashboard - Clientes';
-    // this.permisos.all = this.permisosUsuarioLogin();
     this.alertService.loading();
     this.listarClientes();
   }
 
-  // Asignar permisos de usuario login
-  // permisosUsuarioLogin(): boolean {
-  //   return this.authService.usuario.permisos.includes('PERSONAS_ALL') || this.authService.usuario.role === 'ADMIN_ROLE';
-  // }
+  public openModal(accion: string = 'Crear', elemento: any = {}): void {
 
-  // Abrir modal
-  abrirModal(estado: string, cliente: any = null): void {
-    this.reiniciarFormulario();
+    let dataForm: any = {}
 
-    this.idCliente = 0;
+    if(accion === 'Editar'){      
+      dataForm = {
+        id: elemento.id,
+        descripcion: elemento.descripcion,
+        tipo_identificacion: elemento.tipo_identificacion,
+        identificacion: elemento.identificacion,
+        telefono: elemento.telefono,
+        direccion: elemento.direccion,
+        activo: elemento.activo
+      }
+    }else{
+      dataForm = {
+        id: 0,
+        descripcion: '',
+        tipo_identificacion: 'DNI',
+        identificacion: '',
+        telefono: '',
+        direccion: '',
+        activo: true
+      }
+    }
 
-    if (estado === 'editar') this.getCliente(cliente);
-    else this.showModalCliente = true;
+    const dialogRef = this.dialog.open(ModalClientesComponent, {
+      width: '500px',
+      data: {
+        accion,
+        dataForm
+      }
+    });
 
-    this.estadoFormulario = estado;
+    dialogRef.afterClosed().subscribe(() => { this.listarClientes(); });
+
   }
 
-  // Traer datos de cliente
-  getCliente(cliente: any): void {
-    this.alertService.loading();
-    this.idCliente = cliente.id;
-    this.clienteSeleccionado = cliente;
-    this.clientesService.getCliente(cliente.id).subscribe(({ cliente }) => {
+  filtradoTabla(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-      // DataForm - Cliente
-      this.descripcion = cliente.descripcion; // Razon social
-      this.tipo_identificacion = cliente.tipo_identificacion;
-      this.identificacion = cliente.identificacion;
-      this.telefono = cliente.telefono;
-      this.direccion = cliente.direccion;
-      this.email = cliente.email;
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
-      this.alertService.close();
-      this.showModalCliente = true;
-
-    }, ({ error }) => {
-      this.alertService.errorApi(error);
-    });
+  ordenarTabla(sortState: any) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   // Listar clientes
   listarClientes(): void {
+
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
       activo: this.filtro.activo,
       parametro: this.filtro.parametro,
-      desde: this.desde,
-      cantidadItems: this.cantidadItems,
     }
+
     this.clientesService.listarClientes(parametros).subscribe({
-        next: ({ clientes, totalItems }) => {
-          this.clientes = clientes;
-          this.totalItems = totalItems;
-          this.showModalCliente = false;
-          this.alertService.close();
-        },error: ({ error }) => this.alertService.errorApi(error.message)
-      })
-  }
-
-  // Nuevo cliente
-  nuevoCliente(): void {
-
-    // Verificacion: Descripcion vacia
-    if (this.descripcion.trim() === "") {
-      this.alertService.info('Debes colocar una descripcion');
-      return;
-    }
-
-    // Verificacion: Tipo de identificacion
-    if (this.tipo_identificacion.trim() === "") {
-      this.alertService.info('Debes seleccionar un tipo de identificacion');
-      return;
-    }
-
-    // Verificacion: Telefono
-    if (this.telefono.trim() === "") {
-      this.alertService.info('Debes colocar una teléfono');
-      return;
-    }
-
-    this.alertService.loading();
-
-    const data = {
-      descripcion: this.descripcion, // Razon social
-      tipo_identificacion: this.tipo_identificacion,
-      identificacion: this.identificacion.trim(),
-      telefono: this.telefono,
-      direccion: this.direccion,
-      email: this.email,
-      creatorUser: this.authService.usuario.userId,
-      updatorUser: this.authService.usuario.userId,
-    }
-
-    this.clientesService.nuevoCliente(data).subscribe({
-      next: () => {
-        this.listarClientes();
+      next: ({ clientes, totalItems }) => {
+        this.clientes = clientes;
+        this.totalItems = totalItems;
+        this.resultsLength = totalItems;
+        this.dataSource.data = clientes;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.isLoadingResults = false;
+        this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
 
-  }
-
-  // Actualizar cliente
-  actualizarCliente(): void {
-
-    // Verificacion: Descripcion vacia
-    if (this.descripcion.trim() === "") {
-      this.alertService.info('Debes colocar una descripcion');
-      return;
-    }
-
-    // Verificacion: Tipo de identificacion
-    if (this.tipo_identificacion.trim() === "") {
-      this.alertService.info('Debes seleccionar un tipo de identificacion');
-      return;
-    }
-
-    // Verificacion: Telefono
-    if (this.telefono.trim() === "") {
-      this.alertService.info('Debes colocar una teléfono');
-      return;
-    }
-
-    this.alertService.loading();
-
-    const data = {
-      descripcion: this.descripcion, // Razon social
-      tipo_identificacion: this.tipo_identificacion,
-      identificacion: this.identificacion.trim(),
-      telefono: this.telefono,
-      direccion: this.direccion,
-      email: this.email,
-      updatorUser: this.authService.usuario.userId,
-    }
-
-    this.clientesService.actualizarCliente(this.idCliente, data).subscribe({
-      next: () => {
-        this.listarClientes();
-      }, error: ({ error }) => this.alertService.errorApi(error.message)
-    })
-
-  }
-
-  // Actualizar estado Activo/Inactivo
-  actualizarEstado(cliente: any): void {
-
-    const { id, activo } = cliente;
-
-    this.alertService.question({ msg: '¿Quieres actualizar el estado?', buttonText: 'Actualizar' })
-      .then(({ isConfirmed }: any) => {
-        if (isConfirmed) {
-
-          this.alertService.loading();
-
-          this.clientesService.actualizarCliente(id, { activo: !activo }).subscribe({
-            next: () => {
-              this.listarClientes();
-            }, error: ({ error }) => {
-              this.alertService.close();
-              this.alertService.errorApi(error.message)
-            }
-          })
-
-        }
-      });
-
-  }
-
-  // Reiniciando formulario
-  reiniciarFormulario(): void {
-    this.descripcion = ''; // Razon social
-    this.tipo_identificacion = 'DNI';
-    this.identificacion = '';
-    this.telefono = '';
-    this.direccion = '';
-    this.email = '';
-  }
-
-  // Filtrar Activo/Inactivo
-  filtrarActivos(activo: string): void {
-    this.paginaActual = 1;
-    this.filtro.activo = activo;
-  }
-
-  // Filtrar por Parametro
-  filtrarParametro(parametro: string): void {
-    this.paginaActual = 1;
-    this.filtro.parametro = parametro;
-  }
-
-  // Ordenar por columna
-  ordenarPorColumna(columna: string) {
-    this.ordenar.columna = columna;
-    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
-    this.alertService.loading();
-    this.listarClientes();
-  }
-
-  // Cambiar cantidad de items
-  cambiarCantidadItems(): void {
-    this.paginaActual = 1
-    this.cambiarPagina(1);
-  }
-
-  // Paginacion - Cambiar pagina
-  cambiarPagina(nroPagina: number): void {
-    this.paginaActual = nroPagina;
-    this.desde = (this.paginaActual - 1) * this.cantidadItems;
-    this.alertService.loading();
-    this.listarClientes();
   }
 
 }

@@ -1,0 +1,75 @@
+
+<div class="header-modal">
+  <div>
+    <h1 *ngIf="showEtapa === 'Mueble'" mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nuevo mueble' : 'Editando mueble' }} </h1>
+    <h1 *ngIf="showEtapa === 'Placas'" mat-dialog-title> Gestion de placas </h1>
+  </div>
+  <div class="header-container-iconos">
+    <mat-icon *ngIf="muebleConPlacas" [ngClass]="{'header-icono-seleccionado': showEtapa === 'Mueble'}" (click)="cambiarEtapa('Mueble')" title="Datos de mueble" class="header-icono"> table_bar </mat-icon>
+    <mat-icon *ngIf="muebleConPlacas" [ngClass]="{'header-icono-seleccionado': showEtapa === 'Placas'}" (click)="cambiarEtapa('Placas')" title="Gestion de placas" class="header-icono" style="margin-left: 10px;"> rectangle </mat-icon>
+    <mat-icon *ngIf="dataInput.accion === 'Editar'" (click)="eliminarMueble()" title="Eliminar mueble" class="header-icono-delete"> delete </mat-icon>
+  </div>
+</div>
+
+<div>
+
+  <!-- DATOS DE MUEBLE -->
+  <div mat-dialog-content class="modal-body" *ngIf="showEtapa === 'Mueble'">
+      
+    <ng-select (change)="seleccionarTipoMueble()" [(ngModel)]="dataOutput.tipo_mueble" class="custom-ng-select" placeholder="Tipo de mueble">
+      <ng-option *ngFor="let tipo of tipos_muebles" [value]="tipo.id">{{ tipo.descripcion }} </ng-option>
+    </ng-select>
+  
+    <mat-form-field floatLabel="always">
+      <mat-label> <span style="color: red;"> * </span> Precio </mat-label>
+      <input (keyup.enter)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" [(ngModel)]="dataOutput.precio" matInput type="number" class="example-right-align" placeholder="0">
+      <span matTextPrefix>$&nbsp;</span>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label> Observaciones </mat-label>
+      <input [(ngModel)]="dataOutput.observaciones" (keyup.enter)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" matInput #input placeholder="Ej. Observaciones no obligatorias">
+    </mat-form-field>
+
+  </div>
+
+  <!-- DATOS DE PLACAS -->
+  <div class="container-form-placa" *ngIf="showEtapa === 'Placas'">
+  
+    <div>
+      <ng-select [(ngModel)]="dataPlacaTipo.id" class="custom-ng-select" placeholder="Tipo de mueble">
+        <ng-option *ngFor="let tipo of tipos_placas" [value]="tipo.id"> {{ tipo.codigo }} - {{ tipo.descripcion }} </ng-option>
+      </ng-select>
+      <div style="display: flex; align-items: center;">
+        <mat-form-field style="width: 50%;">
+          <mat-label> Cantidad </mat-label>
+          <input (keyup.enter)="agregarPlaca()" [(ngModel)]="dataPlacaTipo.cantidad" type="number" matInput #input placeholder="Ej. 3">
+        </mat-form-field>
+        <button (click)="agregarPlaca()" style="margin-bottom: 20px; margin-left: 10px;" mat-mini-fab>
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="placas.length > 0">
+      <p style="font-weight: 500;"> LISTADO DE PLACAS </p>
+  
+      <div *ngFor="let placa of placas" class="container-placas">
+        <div> <span style="font-weight: 500;"> Codigo de placa: </span> {{ placa.tipo_placa_madera_codigo }} </div>
+        <div> <span style="font-weight: 500;"> Tipo: </span> {{ placa.tipo_placa_madera_descripcion }} </div>
+        <div> <span style="font-weight: 500;"> Cantidad: </span> {{ placa.cantidad }} </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+</div>
+
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" mat-raised-button color="primary"> {{
+    dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

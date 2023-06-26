@@ -6,6 +6,10 @@ import { format } from 'date-fns';
 })
 export class FechaPipe implements PipeTransform {
   transform(fecha: any): string {
-    return format(new Date(fecha), 'dd/MM/yyyy') === '01/01/1970' ? 'Sin especificar' : format(new Date(fecha), 'dd/MM/yyyy')
+    if(fecha){
+      return format(new Date(fecha), 'dd/MM/yyyy') === '01/01/1970' ? 'Sin especificar' : format(new Date(fecha), 'dd/MM/yyyy')
+    }else{
+      return '';
+    }
   }
 }

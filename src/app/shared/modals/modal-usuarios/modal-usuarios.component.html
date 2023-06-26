@@ -1,0 +1,78 @@
+<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nuevo usuario' : 'Editando usuario' }} </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Usuario </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()"
+      [(ngModel)]="dataOutput.usuario" matInput #input placeholder="Ej. lmoreno">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Apellido </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()"
+      [(ngModel)]="dataOutput.apellido" matInput #input placeholder="Ej. Moreno">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Nombre </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()"
+      [(ngModel)]="dataOutput.nombre" matInput #input placeholder="Ej. Lucas Omar">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> DNI </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()"
+      [(ngModel)]="dataOutput.dni" matInput #input placeholder="Ej. 34060398">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Email </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()"
+      [(ngModel)]="dataOutput.email" matInput #input placeholder="Ej. ing.lucasmoreno@gmail.com">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Role </mat-label>
+    <mat-select [(ngModel)]="dataOutput.role">
+      <mat-option value="ADMIN_ROLE">Root</mat-option>
+      <mat-option value="ADMINISTRATIVO_ROLE">Administrativo</mat-option>
+      <mat-option value="MADERA_ROLE">Empleado - Madera</mat-option>
+      <mat-option value="ALUMINIO_ROLE">Empleado - Aluminio</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="dataInput.accion === 'Crear'" class="input-password">
+    <mat-label> <span style="color: red"> * </span> Contraseña </mat-label>
+    <input [(ngModel)]="dataOutput.password"
+      (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()" matInput
+      [type]="hidePassword ? 'password' : 'text'">
+    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hidePassword">
+      <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="dataInput.accion === 'Crear'" class="input-password">
+    <mat-label> <span style="color: red"> * </span> Repetir </mat-label>
+    <input [(ngModel)]="dataOutput.repetir"
+      (keyup.enter)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()" matInput
+      [type]="hideRepetir ? 'password' : 'text'">
+    <button mat-icon-button matSuffix (click)="hideRepetir = !hideRepetir" [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hideRepetir">
+      <mat-icon>{{hideRepetir ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-slide-toggle [(ngModel)]="dataOutput.activo">
+    {{ dataOutput.activo ? 'Usuario activo' : 'Usuario inactivo' }}
+  </mat-slide-toggle>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearUsuario() : actualizarUsuario()" mat-raised-button
+    color="primary">
+    {{ dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

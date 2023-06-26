@@ -1,977 +1,388 @@
-<!-- Modal: Orden de mantenimiento -->
-<app-modal [showModal]="showModalOrdenMantenimiento">
-  <div>
-    <div class="modal-header">
-      <h1 class=" text-white px-2 py-1 rounded-t"> {{ estadoFormularioOrden === 'crear' ? 'Nueva orden de mantenimiento' : 'Detalles de orden' }}  </h1>
-      <div class="flex items-center">
-        <button (click)="imprimirOrdenMantenimiento()" *ngIf="estadoFormularioOrden === 'editar'" title="Imprimir orden">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
-          </svg>          
-        </button>
-        <button title="Cerrar ventana" class="ml-3" (click)="showModalOrdenMantenimiento = false">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="cursor-pointer feather feather-x text-white mr-2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>        
-      </div> 
-    </div>   
-    <div class="p-2 text-sm">
-      <div class="flex items-center">
-        <div class="w-1/2"> 
-          <label for="fecha" class="font-semibold"> <span class="text-red-500"> * </span> Fecha </label>
-          <input id="fecha" [(ngModel)]="dataOrdenMantenimiento.fecha" type="date" class="input-general">
-        </div>        
-        <div class="w-1/2 ml-4">
-          <label for="precio" class="font-semibold"> Precio </label>
-          <input (keyup.enter)="estadoFormularioOrden === 'crear' ? nuevaOrdenMantenimiento() : actualizarOrdenMantenimiento()" id="precio" [(ngModel)]="dataOrdenMantenimiento.precio" type="number" placeholder="Ej. 2000" class="input-general">
-        </div>
-      </div>
-      <div class="mt-3">
-        <label for="observaciones" class="font-semibold"> Obervaciones </label>
-        <input (keyup.enter)="estadoFormularioOrden === 'crear' ? nuevaOrdenMantenimiento() : actualizarOrdenMantenimiento()" id="observaciones" [(ngModel)]="dataOrdenMantenimiento.observaciones" type="text" placeholder="Ej. Colocar aquí las observaciones" class="input-general">
-      </div>
-      <div *appPermisos="['MADERA_ALL']" class="flex items-center mt-3">
-        <button (click)="estadoFormularioOrden === 'crear' ? nuevaOrdenMantenimiento() : actualizarOrdenMantenimiento()" class="btn-confirm">
-          {{ estadoFormularioOrden === 'crear' ? 'Genera orden' : 'Actualizar' }}
-        </button>
-        <button (click)="eliminarOrdenMantenimiento()" *ngIf="estadoFormularioOrden ==='editar'" class="btn-cancel ml-2">
-          Eliminar
-        </button>
-      </div>
-    </div> 
-  </div>
-</app-modal>
+<mat-card>
 
-<!-- Modal: Crear / Editar tipo de placas -->
-<app-modal [showModal]="showModalTipoPlaca">
-  <div>
-    <div class="modal-header">
-      <h1 class=" text-white px-2 py-1 rounded-t"> Nuevo tipo de placa </h1>
-      <svg (click)="regresarSeccionPlacas()" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="cursor-pointer feather feather-x text-white mr-2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
+  <mat-card-header class="card-principal-header">
+    <div style="text-align: center;">
+      <mat-card-title> DETALLES DE OBRA </mat-card-title>
+      <mat-card-subtitle> MADERA </mat-card-subtitle>
     </div>
-    <div class="p-4 text-sm">
-      <div class="w-full md:flex md:items-center">
-        <div class="w-full">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Código </p>
-          <input (keyup.enter)="nuevoTipoPlaca()" [(ngModel)]="codigoPlaca" class="input-general w-full"
-            placeholder="Colocar código de placa" type="text">
-        </div>
-      </div>
-      <div class="w-full mt-4 md:flex md:items-center">
-        <div class="w-full">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Descripción </p>
-          <input (keyup.enter)="nuevoTipoPlaca()" [(ngModel)]="descripcionPlaca" class="input-general"
-            placeholder="Colocar tipo de placa" type="text">
-        </div>
-      </div>
-      <div class="mt-4">
-        <button (click)="nuevoTipoPlaca()" class="btn-confirm">
-          Crear tipo
+    <button mat-icon-button [matMenuTriggerFor]="menu_obra">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu_obra="matMenu">
+      <div *appPermisos="permisosTotales">
+        <button *ngIf="obra.estado !== 'Finalizada'" (click)="paseAdelante()" mat-menu-item>
+          <mat-icon> east </mat-icon>
+          <span> Pase adelante </span>
         </button>
+        <button *ngIf="obra.estado !== 'Pendiente'" (click)="openModalPases()" mat-menu-item>
+          <mat-icon> west </mat-icon>
+          <span> Pase atras </span>
+        </button>
+        <button (click)="eliminarObra()" mat-menu-item>
+          <mat-icon> delete </mat-icon>
+          <span> Eliminar obra </span>
+        </button>
+      </div>
+    </mat-menu>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <!-- Progreso de obra -->
+    <div class="container-etapas">
+      <div [ngClass]="{'etapa-seleccionada':obra?.estado === 'Pendiente'}" class="items-etapas">
+        <mat-icon [ngStyle]="{'color: white':obra?.estado === 'Pendiente'}"> pending_actions </mat-icon>
+        <span style="margin-top: 5px; margin-left: 5px;"> Pendiente </span>
+      </div>
+      <div [ngClass]="{'etapa-seleccionada':obra?.estado === 'Produccion'}" class="items-etapas-secundarios">
+        <mat-icon> handyman </mat-icon>
+        <span style="margin-top: 5px; margin-left: 5px;"> Producción </span>
+      </div>
+      <div [ngClass]="{'etapa-seleccionada':obra?.estado === 'Colocacion'}" class="items-etapas-secundarios">
+        <mat-icon> domain_disabled </mat-icon>
+        <span style="margin-top: 5px; margin-left: 5px;"> Colocación </span>
+      </div>
+      <div [ngClass]="{'etapa-seleccionada':obra?.estado === 'Finalizada'}" class="items-etapas-secundarios">
+        <mat-icon> task </mat-icon>
+        <span style="margin-top: 5px; margin-left: 5px;"> Finalizada </span>
       </div>
     </div>
-  </div>
-</app-modal>
 
-<!-- Modal: Seccion placas -->
-<app-modal [showModal]="showSeccionPlacas">
-  <div class="modal-header">
-    <h1 class=" text-white px-2 py-1 rounded-t"> Mueble - Placas </h1>
-    <svg (click)="regresarNuevoMueble()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      class="cursor-pointer feather feather-x text-white mr-2">
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-  </div>
-  <div class="p-2 text-sm">
-    <div>
+    <mat-divider></mat-divider>
 
-      <p class="font-semibold"> Agregando placas </p>
+    <mat-tab-group (selectedTabChange)="opcionTab($event)">
 
-      <!-- Busqueda de tipo de placa -->
-      <div *ngIf="!tipoPlacaSeleccionado" class="relativa w-full">
-        <div class="flex items-center mt-2">
-          <input (focus)="showBusquedaPlacas = true" [(ngModel)]="filtro.parametroPlaca" placeholder="Buscar tipo de placa"
-            class="border focus:outline-none border-gray-400 p-2 w-full" type="text">
-          <div class="flex items-center">
-            <!-- <button (click)="buscarPlacas()" title="Buscar tipo"
-              class="p-2 focus:outline-none ml-2 bg-gray-100 border border-gray-400 hover:text-secondaryColor">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                <path fill-rule="evenodd"
-                  d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
-                  clip-rule="evenodd" />
-              </svg>
-            </button> -->
-            <button (click)="abrirNuevoTipoPlaca()" title="Nuevo tipo"
-              class="p-2 focus:outline-none ml-2 bg-gray-100 border border-gray-400 hover:text-secondaryColor">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div *ngIf="showBusquedaPlacas" class="bg-white mt-1 w-11/12 absolute border border-gray-400">
-          <div class="flex items-center justify-between bg-gray-100 p-2 border-b border-gray-400">
-            <h1 class=" font-semibold"> Tipos de placas </h1>
-            <button (click)="cerrarBusquedaPlacas()" title="Cerrar busqueda" class="focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <div (click)="abrirNuevoTipoPlaca()" class="hover:bg-gray-100 p-2 text-center cursor-pointer"
-            *ngIf="listadoTiposPlacas.length === 0">
-            <p class="text-xs"> No se encontro el tipo buscado </p>
-            <p class="text-gray-700 font-semibold flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-              </svg>
-              <span>
-                Agregar nuevo tipo
-              </span>
-            </p>
-          </div>
-          <div class="max-h-80 overflow-y-auto">
-            <div (click)="seleccionarTipoPlaca(tipo)" class="p-2 flex items-center hover:bg-gray-100 cursor-pointer"
-              *ngFor="let tipo of listadoTiposPlacas | filtroPlacasMadera:filtro.parametroPlaca">
-              <img class="w-10" src="assets/img/placa-madera.svg" alt="placa-madera.svg">
-              <div class="ml-3">
-                <p class="font-semibold"> {{ tipo.codigo }} </p>
-                <p class="text-gray-600 text-xs"> {{ tipo.descripcion }} </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agregando placa -->
-      <div class="mt-2" *ngIf="tipoPlacaSeleccionado">
-        <div class="p-2 md:flex md:items-center bg-gray-100 justify-between border shadow border-gray-400">
-          <div class="flex items-center">
-            <img class="w-10" src="assets/img/placa-madera.svg" alt="placa-madera.svg">
-            <div class="ml-2">
-              <p class="font-semibold"> {{ tipoPlacaSeleccionado.codigo }} </p>
-              <p class="text-xs text-gray-800"> {{ tipoPlacaSeleccionado.descripcion }} </p>
-            </div>
-          </div>
-          <div class="flex items-center mt-2 md:mt-0">
-            <input appAutoFocus (keyup.enter)="formularioMueble === 'Crear' ? agregarPlaca() : agregarPlacaEditando()"
-              [(ngModel)]="cantidadPlacas" type="number" placeholder="Cantidad"
-              class="border w-24 focus:outline-none border-gray-400 p-2">
-            <button (click)="formularioMueble === 'Crear' ? agregarPlaca() : agregarPlacaEditando()" title="Agregar"
-              class="border bg-white focus:outline-none border-gray-400 ml-2 rounded p-2 shadow hover:text-green-800">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-              </svg>
-            </button>
-            <button (click)="cancelarSeleccionarPlaca()" title="Cancelar"
-              class="border bg-white focus:outline-none border-gray-400 ml-2 rounded p-2 shadow hover:text-red-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-4">
-        <p class="mt-2 font-semibold border border-gray-400 bg-gray-100 p-2"> Listado de placas ({{placas.length}})</p>
-        <div class="px-1">
-          <p *ngIf="placas.length === 0" class="text-gray-700 py-2"> No se encontraron placas asociadas al mueble </p>
-          <div *ngIf="placas.length > 0">
-            <div class="flex items-center justify-between border border-gray-400 mt-2 p-2" *ngFor="let placa of placas">
-              <div class="flex items-center">
-                <img class="w-10 md:w-14" src="assets/img/placa-madera.svg" alt="placa-madera.svg">
-                <div class="ml-2">
-                  <p class="font-semibold text-xs md:text-sm"> {{ placa.tipo_placa_madera_codigo }} </p>
-                  <p class="text-gray-700 text-xs"> {{ placa.tipo_placa_madera_descripcion }} </p>
-                  <p class="text-gray-800 text-xs"> Cantidad: {{ placa.cantidad }} </p>
-                </div>
-              </div>
-              <button
-                (click)="formularioMueble === 'Crear' ? eliminarPlaca(placa.tipo_placa_madera) : eliminarPlacaEditando(placa.id)"
-                title="Eliminar placa" class="focus:outline-none hover:text-red-800 p-2 border border-gray-400 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Detalles de obra
+        </ng-template>
+        <div class="container-detalles">
+          <div class="subtitulo-detalles">
+            <h2 style="margin-top: 20px;"> DETALLES DE OBRA </h2>
+            <div>
+              <button mat-icon-button [matMenuTriggerFor]="menu_muebles">
+                <mat-icon>more_vert</mat-icon>
               </button>
+              <mat-menu #menu_muebles="matMenu">
+                <button *appPermisos="permisosTotales" (click)="openModalEditarObra()" mat-menu-item>
+                  <mat-icon> edit </mat-icon>
+                  <span> Editar detalles </span>
+                </button>
+              </mat-menu>
             </div>
           </div>
-        </div>
-      </div>
-      <button *ngIf="formularioMueble === 'Crear'" (click)="nuevoMueble()" class="btn-confirm mt-2">
-        Agregar mueble
-      </button>
-    </div>
-  </div>
-</app-modal>
-
-<!-- Modal: Pase hacia atras -->
-<app-modal [showModal]="showPaseAtras">
-  <div>
-    <div class="modal-header">
-      <h1 class=" text-white px-2 py-1 rounded-t"> Regresar a etapa anterior </h1>
-      <svg (click)="showPaseAtras = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="cursor-pointer feather feather-x text-white mr-2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </div>
-  </div>
-  <div class="p-2">
-    <div class="text-sm">
-      <p class="font-semibold pl-2"> <span class="text-red-700 font-semibold"> * </span> Etapa a regresar </p>
-      <select [(ngModel)]="proximaEtapa" class="select-general">
-        <option *ngFor="let etapa of etapasRegreso" [value]="etapa"> {{ etapa }} </option>
-      </select>
-    </div>
-    <div class="text-sm mt-3">
-      <p class="font-semibold pl-2"> <span class="text-red-700 font-semibold"> * </span> Motivo del pase </p>
-      <select [(ngModel)]="paseMotivo" class="select-general">
-        <option value=""> Seleccionar motivo </option>
-        <option *ngFor="let motivo of motivos" [value]="motivo.id"> {{ motivo.descripcion }} </option>
-      </select>
-    </div>
-    <div class="text-sm mt-3">
-      <p class="font-semibold pl-2"> Observación </p>
-      <input (keyup.enter)="paseAtrasObra()" [(ngModel)]="paseObservacion" type="text"
-        placeholder="Ej. Falta de materiales" class="input-general">
-    </div>
-    <div class="mt-3">
-      <button (click)="paseAtrasObra()" class="btn-confirm">
-        Generar pase
-      </button>
-    </div>
-  </div>
-</app-modal>
-
-<!-- Modal: Nuevo/Editar Mueble -->
-<app-modal [showModal]="showNuevoMueble">
-  <div>
-    <div class="modal-header">
-      <h1 class=" text-white px-2 py-1 rounded-t"> {{ formularioMueble === 'Crear' ? 'Nuevo mueble' : 'Editando mueble'
-        }} </h1>
-      <svg (click)="showNuevoMueble = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="cursor-pointer feather feather-x text-white mr-2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </div>
-    <div class="p-3 max-h-96 overflow-y-auto text-sm">
-      <div class="md:flex md:items-center">
-        <div class="md:w-1/2">
-          <p class="font-semibold"> <span class="text-red-700"> * </span> Tipo de mueble </p>
-          <select (change)="conSinPlaca()" [(ngModel)]="tipoMueble" class="select-general">
-            <option value=""> Seleccionar tipo </option>
-            <option *ngFor="let tipo of tiposMuebles" [value]="tipo.id"> {{ tipo?.descripcion }} </option>
-          </select>
-        </div>
-        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
-          <p class="font-semibold"> <span class="text-red-700"> * </span> Precio </p>
-          <input (keyup.enter)="
-            (formularioMueble === 'Crear' && muebleConPlaca) ? abrirSeccionPlacas() :
-            (formularioMueble === 'Crear' && !muebleConPlaca) ? nuevoMueble() : editarMueble()
-          " [(ngModel)]="mueblePrecio" type="number" placeholder="Precio del mueble" class="input-general">
-        </div>
-      </div>
-      <div class="mt-3">
-        <p class="font-semibold"> Observaciones </p>
-        <input (keyup.enter)="
-          (formularioMueble === 'Crear' && muebleConPlaca) ? abrirSeccionPlacas() :
-          (formularioMueble === 'Crear' && !muebleConPlaca) ? nuevoMueble() : editarMueble()
-        " [(ngModel)]="muebleObservaciones" placeholder="Colocar aquí las observaciones de ser necesario"
-          class="input-general" type="text">
-      </div>
-      <div *appPermisos="['MADERA_ALL']" >
-        <div (click)="abrirSeccionPlacas()" title="Listado de placas del mueble"
-          *ngIf="formularioMueble === 'Editar' && muebleConPlaca" class="mt-3">
-          <button
-            class="p-2 border bg-gray-100 border-gray-400 text-center focus:outline-none w-full font-semibold hover:text-secondaryColor">
-            Listado de placas </button>
-        </div>
-      </div>
-    </div>
-    <div *appPermisos="['MADERA_ALL']">
-      <div *ngIf="muebleConPlaca && tipoMueble !== '' || formularioMueble === 'Editar'"
-        class="md:flex w-full px-2 pb-2 items-center">
-        <button [ngClass]="{'w-1/2':formularioMueble === 'Editar', 'w-full':formularioMueble === 'Crear'}"
-          (click)="formularioMueble === 'Crear' ? abrirSeccionPlacas() : editarMueble()" class="btn-confirm">
-          {{ formularioMueble === 'Crear' ? 'Continuar' : 'Editar mueble' }}
-        </button>
-        <button (click)="eliminarMueble()" *ngIf="formularioMueble === 'Editar'"
-          class="btn-cancel text-sm md:ml-2 mt-2 md:mt-0">
-          Eliminar mueble
-        </button>
-      </div>
-      <div *ngIf="!muebleConPlaca && tipoMueble !== '' && formularioMueble === 'Crear'" class="px-2 pb-2">
-        <button class="btn-confirm" (click)="nuevoMueble()"> Agregar mueble </button>
-      </div>
-    </div>
-  </div>
-</app-modal>
-
-<!-- Modal: Editar datos de obra -->
-<app-modal [showModal]="showEditarObra">
-  <div (keyup.enter)="editarObra()">
-    <div class="modal-header">
-      <h1 class=" text-white px-2 py-1 rounded-t"> Editando datos de obra </h1>
-      <svg (click)="showEditarObra = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="cursor-pointer feather feather-x text-white mr-2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </div>
-    <div class="px-4 py-2 max-h-96 overflow-y-auto text-sm">
-      <div class="w-full md:flex md:items-center">
-        <div class="md:w-1/2">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Número de obra </p>
-          <input [(ngModel)]="codigo" placeholder="Ej. 23" class="input-general" type="text">
-        </div>
-        <div class="md:w-1/2 md:ml-3 mt-4 md:mt-0"></div>
-      </div>
-      <div class="w-full mt-4 md:flex md:items-center">
-        <div class="md:w-1/2">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Fecha de inicio </p>
-          <input [disabled]="true" [(ngModel)]="fecha_inicio" class="input-general" type="date">
-        </div>
-        <div class="md:w-1/2 md:ml-3 mt-4 md:mt-0">
-          <p class="font-semibold"> Fecha de colocación </p>
-          <input [(ngModel)]="fecha_finalizacion_estimada" [min]="LIMITE_FECHA_FINALIZACION" class="input-general"
-            type="date">
-        </div>
-      </div>
-      <div class="w-full md:flex mt-4 md:items-center">
-        <div class="w-full">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Dirección </p>
-          <input [(ngModel)]="direccion" class="input-general" placeholder="Colocar dirección" type="text">
-        </div>
-      </div>
-      <div class="w-full md:flex mt-4 md:items-center">
-        <div class="w-full">
-          <p class="font-semibold"> Observaciones </p>
-          <input [(ngModel)]="descripcion" class="input-general" placeholder="Observaciones opcionales" type="text">
-        </div>
-      </div>
-      <div class="xl:flex items-center mt-4">
-        <div class="xl:w-1/2">
-          <p class="font-semibold text-sm"> Fecha de alta </p>
-          <div class="input-disabled capitalize">
-            {{ obra?.createdAt | fecha }}
-          </div>
-        </div>
-        <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
-          <p class="font-semibold text-sm"> Usuario creador </p>
-          <div class="input-disabled capitalize">
-            {{ obra?.creatorUser?.apellido.toLowerCase() }} {{
-            obra?.creatorUser?.nombre.toLowerCase() }}
-          </div>
-        </div>
-      </div>
-      <div class="xl:flex items-center mt-4">
-        <div class="xl:w-1/2">
-          <p class="font-semibold text-sm"> Ultima actualización </p>
-          <div class="input-disabled">
-            {{ obra?.updatedAt | fecha }}
-          </div>
-        </div>
-        <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
-          <p class="font-semibold text-sm"> Usuario ultima actualización </p>
-          <div class="input-disabled capitalize">
-            {{ obra?.updatorUser?.apellido.toLowerCase() }} {{
-            obra?.updatorUser?.nombre.toLowerCase() }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="px-2 pb-2">
-      <div class="mt-2">
-        <button (click)="editarObra()"
-          class="bg-thirdColor text-white text-sm focus:outline-none shadow w-full font-semibold p-2 rounded mt-2">
-          Actualizar obra </button>
-      </div>
-    </div>
-  </div>
-</app-modal>
-
-<!-- Modal: Nuevo cliente -->
-<app-modal [showModal]="showNuevoCliente">
-  <div (keyup.enter)="nuevoCliente()">
-    <div class="modal-header">
-      <h1 class=" text-white rounded-t"> Nuevo cliente </h1>
-      <svg (click)="regresarEditarCliente()" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="cursor-pointer feather feather-x text-white mr-2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </div>
-    <div class="px-4 py-2 max-h-96 overflow-y-auto text-sm">
-      <div class="w-full md:flex md:items-center">
-        <div class="w-full">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Nombre o Razón social </p>
-          <input [(ngModel)]="descripcion_cliente" class="input-general" placeholder="Ej. Equinoccio Technology"
-            type="text">
-        </div>
-      </div>
-      <div class="mt-4 w-full md:flex md:items-center">
-        <div class="md:w-1/2">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de identificación </p>
-          <select [(ngModel)]="tipo_identificacion" class="select-general">
-            <option value="DNI"> DNI </option>
-            <option value="CUIL"> CUIL </option>
-            <option value="CUIT"> CUIT </option>
-          </select>
-        </div>
-        <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
-          <p class="font-semibold"> Identificación </p>
-          <input [(ngModel)]="identificacion" class="input-general" placeholder="Ej. 34060398" type="text">
-        </div>
-      </div>
-      <div class="mt-4 w-full md:flex md:items-center">
-        <div class="md:w-1/2">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Telefono </p>
-          <input [(ngModel)]="telefono" placeholder="Ej. 2664869642" class="input-general" type="text">
-        </div>
-        <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
-          <p class="font-semibold"> Direccion </p>
-          <input [(ngModel)]="direccion_cliente" class="input-general" placeholder="Ej. Pringles 539" type="text">
-        </div>
-      </div>
-    </div>
-    <div class="px-2 pb-2">
-      <button (click)="nuevoCliente()" class="btn-confirm mt-2">
-        Crear cliente </button>
-    </div>
-  </div>
-</app-modal>
-
-<!-- Editar cliente -->
-<app-modal [showModal]="showEditarCliente">
-  <div>
-
-    <div class="modal-header">
-      <h3> Editando cliente </h3>
-      <button (click)="showEditarCliente = false" class=focus:outline-none>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-
-    <div class="pt-3 pb-1 px-2 text-sm">
-
-      <!-- Cliente no seleccionado -->
-      <div *ngIf="!clienteSeleccionado" class="w-11/12 mb-2">
-        <div>
-          <p class="font-semibold">
-            <span class="text-red-700"> * </span>
-            <span>
-              Seleccionar cliente
-            </span>
-          </p>
-          <div class="flex items-center mt-2">
-            <input [(ngModel)]="filtro.parametroCliente" type="text" (focus)="showOptionsClientes = true"
-              class="border shadow border-gray-400 p-2 w-96 focus:outline-none" placeholder="Buscar cliente">
-            <button (click)="abrirModalNuevoCliente()" title="Nuevo cliente"
-              class="p-2 ml-2 focus:outline-none bg-gray-100 border border-gray-400 hover:text-secondaryColor">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="bg-white border mt-2 text-center border-gray-400 absolute w-72 md:w-96"
-            *ngIf="showOptionsClientes">
-
-            <div class="bg-gray-100 p-2 px-4 flex items-center justify-between border-b border-gray-400">
-              <p class="font-semibold"> Listado de clientes </p>
-              <button (click)="showOptionsClientes = false" class="focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd" />
-                </svg>
-              </button>
-            </div>
-
-            <div class="max-h-60 overflow-y-auto">
-              <div (click)="seleccionarCliente(cliente)"
-                class="cursor-pointer border-b text-left hover:bg-gray-100 p-2 text-sm"
-                *ngFor="let cliente of clientes | filtroClientes:filtro.parametroCliente:'true'">
-                <div class="flex items-center">
-                  <img class="w-10" src="assets/img/cliente.svg">
-                  <div class="ml-2">
-                    <p class="text-xs md:text-sm"> {{ cliente.descripcion }} </p>
-                    <p *ngIf="cliente.identificacion !== ''" class="text-xs text-gray-500"> {{
-                      cliente.tipo_identificacion }} {{ cliente.identificacion }} </p>
-                    <p *ngIf="cliente.identificacion === ''" class="text-xs text-gray-500"> Sin identificación </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Cliente seleccionado -->
-      <div *ngIf="clienteSeleccionado"
-        class="border shadow flex items-center justify-between border-gray-400 w-full p-2">
-        <div class="flex items-center">
-          <img src="assets/img/cliente.svg" class="w-10 md:w-20">
-          <div class="ml-4">
-            <p class="font-semibold text-xs md:text-sm"> {{ clienteSeleccionado.descripcion }} </p>
-            <p *ngIf="clienteSeleccionado?.identificacion !== ''"> <span class="font-semibold text-xs md:text-sm"> {{ clienteSeleccionado?.tipo_identificacion }} </span>
-              {{
-              clienteSeleccionado?.identificacion }} </p>
-            <p class="text-gray-500 text-sm" *ngIf="clienteSeleccionado?.identificacion === ''">
-              Sin identificación
-            </p>
-          </div>
-        </div>
-
-        <button (click)="eliminarCliente()" title="Buscar otro cliente"
-          class="p-2 mr-2 rounded bg-gray-100 hover:text-red-700 focus:outline-none border border-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-    </div>
-
-    <div class="px-2 pb-2">
-      <button (click)="editarCliente()" class="btn-confirm"> Actualizar
-        cliente </button>
-    </div>
-
-  </div>
-</app-modal>
-
-<!-- Pagina principal -->
-<div class="gsap-contenido mb-10">
-  <div class="max-w-3xl mx-auto border border-gray-400 shadow md:mt-5 p-2 md:w-full">
-    <div class="p-2 flex items-center justify-between">
-      <div class="flex items-center">
-        <button routerLink="/dashboard/obras-madera" title="Regresar"
-          class="text-xl focus:outline-none hover:text-secondaryColor">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-        </button>
-        <div class="ml-4">
-          <h2 class="text-xl md:text-2xl font-semibold"> Detalles de obra </h2>
-          <p class="text-xs md:text-sm">
-            <span class="font-semibold">
-              Tipo de obra:
-            </span>
-            Madera (Nro {{ obra?.codigo }})
-          </p>
-          <p class="text-xs md:text-sm"> <span class="font-semibold"> Estado: </span> {{ obra?.estado }} </p>
-        </div>
-      </div>
-      <div class="flex items-center">
-        <div *appPermisos="['MADERA_ALL']">
-          <button *ngIf="obra?.estado === 'Pendiente'" (click)="eliminarObra()" title="Eliminar obra"
-            class="p-2 bg-red-700 focus:outline-none text-white shadow rounded">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-            </svg>
-          </button>
-        </div>
-        <button (click)="abrirPaseAtras()" *ngIf="obra?.estado !== 'Pendiente'" title="Regresar a etapa anterior"
-          class="p-2 bg-red-700 focus:outline-none text-white shadow rounded">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
-          </svg>
-        </button>
-        <button (click)="paseAdelanteObra()" *ngIf="obra?.estado !== 'Finalizada'" title="Pasar a etapa siguiente"
-          class="bg-green-700 focus:outline-none text-white ml-2 p-2 shadow rounded">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Estapas de una obra -->
-    <div class="w-full flex text-xs md:text-sm items-center border border-gray-400">
-      <div [ngClass]="{'bg-yellow-100 text-yellow-700 font-semibold': obra?.estado === 'Pendiente'}"
-        class="w-1/4 text-center border-r text-gray-600 bg-gray-100  border-gray-400 p-2"> Pendiente </div>
-      <div [ngClass]="{'bg-orange-100 text-orange-700 font-semibold': obra?.estado === 'Produccion'}"
-        class="w-1/4 text-center text-gray-600 bg-gray-100 border-r font-semibold border-gray-400 p-2"> Producción
-      </div>
-      <div
-        [ngClass]="{'bg-blue-100 text-blue-800 font-semibold': obra?.estado === 'Colocacion', 'bg-gray-100 text-gray-700': obra?.estado !== 'Colocacion'}"
-        class="w-1/4 text-center border-r font-semibold border-gray-400 p-2"> Colocación </div>
-      <div [ngClass]="{'bg-green-100 text-green-700 font-semibold': obra?.estado === 'Finalizada'}"
-        class="w-1/4 text-center text-gray-600 bg-gray-100 font-semibold p-2"> Finalizada </div>
-    </div>
-
-    <!-- Controles de contenido -->
-    <div class="border flex items-center border-gray-400 w-full mt-2 text-xs md:text-sm">
-      <button (click)="showContenidoSeccion = 'Detalles'"
-        [ngClass]="{'bg-secondaryColor text-white' : showContenidoSeccion === 'Detalles'}"
-        class="border-r w-1/2 text-center focus:outline-none font-semibold border-gray-400 p-2"> Detalles de la obra
-      </button>
-      <button (click)="abrirHistorialPases()"
-        [ngClass]="{'bg-secondaryColor text-white' : showContenidoSeccion === 'Historial_Pases'}"
-        class="w-1/2 text-center focus:outline-none font-semibold p-2"> Historial de pases </button>
-    </div>
-
-    <!-- Detalles de la obra -->
-    <div *ngIf="showContenidoSeccion === 'Detalles'">
-
-      <!-- Seccion: Cliente -->
-      <div class="mb-2 mt-3 border border-t-0 border-gray-400">
-
-        <h3
-          class="p-2 text-sm flex items-center justify-between border-l-0 border-r-0 bg-gray-100 border border-gray-400">
-          <span class="font-semibold ml-1"> Datos de cliente </span>
-          <button *appPermisos="['MADERA_ALL']" (click)="abrirEditarCliente()" title="Editar cliente"
-            class="mr-1 focus:outline-none hover:text-secondaryColor">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-            </svg>
-          </button>
-        </h3>
-
-        <div class="flex items-center my-4 ml-2">
-          <img class="w-20 md:w-24" src="assets/img/cliente.svg" alt="cliente.svg">
-          <div class="ml-3">
-            <p class="font-semibold text-sm md:text-base"> {{ obra?.cliente.descripcion }} </p>
-            <p *ngIf="obra?.cliente.identificacion !== ''" class="text-gray-700 text-sm"> {{ obra?.cliente.tipo_identificacion }} {{ obra?.cliente.identificacion }}
-            </p>
-            <p class="text-sm text-gray-500" *ngIf="obra?.cliente.identificacion === ''">  Sin identificación </p>
-            <div class="flex items-center text-gray-700 text-sm mt-2">
-              <div class="p-1 bg-gray-200 border border-gray-300 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                  class="w-4 h-4 text-gray-700">
-                  <path fill-rule="evenodd"
-                    d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-              <span class="ml-1">
-                {{ obra?.cliente.telefono }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Seccion: Datos de obra -->
-      <div class="mb-2 mt-2 border border-t-0 border-gray-400">
-
-        <h3
-          class="p-2 text-sm flex items-center justify-between border-l-0 border-r-0 bg-gray-100 border border-gray-400">
-          <span class="font-semibold ml-1"> Datos de la obra </span>
-          <button *appPermisos="['MADERA_ALL']" (click)="abrirEditarObra()" title="Editar datos de obra"
-            class="mr-1 focus:outline-none hover:text-secondaryColor">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-            </svg>
-          </button>
-        </h3>
-
-        <div class="flex items-center my-4 px-2 text-sm">
-          <div class="w-full">
-            <div class="border border-gray-400">
-              <p class="bg-gray-100 text-center p-1 border-b border-gray-400 font-semibold"> Plazo de obra </p>
-              <div class="md:flex w-full md:items-center md:justify-between">
-                <div class="p-2 flex items-center justify-center md:w-1/2 text-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-5 text-secondaryColor h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                  </svg>
-                  <div class="ml-2">
-                    <span class="font-semibold">
-                      Fecha de incio:
-                    </span>
-                    {{ obra?.fecha_inicio | fecha }}
-                  </div>
-                </div>
-                <div class="p-2 flex items-center justify-center md:w-1/2 text-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-5 text-secondaryColor h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                  </svg>
-                  <div class="ml-2">
-                    <span class="font-semibold">
-                      Fecha de colocación:
-                    </span>
-                    {{ obra?.fecha_finalizacion_estimada | fecha }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="mt-3">
-              <div class="p-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 text-secondaryColor h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
-                </svg>
-                <div class="ml-1 mt-1">
-                  <span class="font-semibold">
-                    Código de obra:
-                  </span>
-                  {{ obra?.codigo | codigoMadera }}
-                </div>
-              </div>
-              <div class="p-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 text-secondaryColor h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
-                </svg>
-                <div class="ml-1 mt-1">
-                  <span class="font-semibold">
-                    Precio total:
-                  </span>
-                  ${{ obra?.precio | moneda }}
-                </div>
-              </div>
-              <div class="p-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 text-secondaryColor h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                </svg>
-                <div class="ml-1 mt-1">
-                  <span class="font-semibold">
-                    Direccion:
-                  </span>
-                  {{ obra?.direccion }}
-                </div>
-              </div>
-              <div *ngIf="obra?.descripcion !== ''" class="p-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 text-secondaryColor h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                </svg>
-
-                <div class="ml-1 mt-1">
-                  <span class="font-semibold">
-                    Observaciones:
-                  </span>
-                  {{ obra?.descripcion }}
-                </div>
-              </div>
-              <div *ngIf="obra?.estado === 'Finalizada'"
-                class="p-2 flex ml-2 mt-1 items-center w-max border border-green-400 rounded bg-green-100">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                  class="w-5 h-5 text-green-700">
-                  <path fill-rule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                    clip-rule="evenodd" />
-                </svg>
-
-
-                <div class="ml-1 mt-1">
-                  <span class="font-semibold">
-                    Finalizada el:
-                  </span>
-                  {{ obra?.fecha_finalizacion | fecha }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="mb-2 mt-2">
-        <h3 class="p-2 text-sm flex items-center justify-between bg-gray-100 border border-gray-400">
-          <span class="font-semibold ml-1"> Ordenes de mantenimiento ({{ ordenesMantenimiento.length }}) </span>
-          <button *appPermisos="['MADERA_ALL']" (click)="abrirOrdenMantenimiento('crear')" title="Agregar orden"
-            class="focus:outline-none hover:text-secondaryColor">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path fill-rule="evenodd"
-                d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-                clip-rule="evenodd" />
-            </svg>
-          </button>
-        </h3>
-        <div class="border border-gray-400 border-t-0 p-2">
-
-          <div *ngIf="ordenesMantenimiento.length > 0" class="overflow-y-auto max-h-64 text-sm">
-            <div [ngClass]="{'border-yellow-600 bg-yellow-50 border-2': !orden.precio}" title="Detalles de orden" (click)="abrirOrdenMantenimiento('editar', orden)" *ngFor="let orden of ordenesMantenimiento" class="border hover:bg-red-50 mb-2 hover:border-secondaryColor cursor-pointer border-gray-400 p-2">
-              <div class="flex items-center justify-between">
-                <p> <span class="font-semibold"> Fecha: </span> {{ orden.fecha | fecha }} </p>
-                <p> <span class="font-semibold"> Nro: </span> {{ orden.id }} </p>
-              </div>
-              <div class="mt-1">
-                <p> <span class="font-semibold"> Precio: </span> {{ !orden.precio ? 'Sin especificar' : '$'+(orden.precio | moneda) }} </p>
-                <p> <span class="font-semibold"> Observaciones: </span> {{ orden.observaciones === '' ? 'Sin especificar' : orden.observaciones }} </p>
-              </div>
-            </div>
-          </div>
-          <p *ngIf="ordenesMantenimiento.length <= 0"class="text-gray-700 text-sm"> No se encontraron ordenes de mantenimiento </p>
-        </div>
-      </div> 
-
-      <!-- Seccion: Muebles -->
-      <div class="mb-2 mt-4">
-
-        <h3 class="p-2 text-sm flex items-center justify-between bg-gray-100 border border-gray-400">
-          <span class="font-semibold ml-1"> Listado de muebles ({{ muebles.length }}) </span>
-          <button *appPermisos="['MADERA_ALL']" (click)="abrirNuevoMueble()" title="Agregar mueble"
-            class="focus:outline-none hover:text-secondaryColor">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path fill-rule="evenodd"
-                d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-                clip-rule="evenodd" />
-            </svg>
-          </button>
-        </h3>
-
-        <div *ngIf="muebles?.length === 0" class="flex items-center my-4 ml-2 text-sm">
           <div>
-            <p class="text-gray-700"> No se encontraron muebles en esta obra </p>
-            <button (click)="abrirNuevoMueble()"
-              class="bg-green-700 focus:outline-none text-white p-2 rounded shadow mt-2">
+
+            <mat-list>
+
+              <mat-list-item>
+                <mat-icon matListItemIcon> code </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Código de obra: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.codigo | codigoMadera }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item>
+                <mat-icon matListItemIcon> calendar_month </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Fecha de inicio: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.fecha_inicio | fecha }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item>
+                <mat-icon matListItemIcon> calendar_month </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Fecha de colocacíon: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.fecha_finalizacion_estimada | fecha }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item>
+                <mat-icon matListItemIcon> person </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Cliente: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.cliente?.descripcion }} (Tel. {{
+                    this.obra?.cliente?.telefono }}) </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item>
+                <mat-icon matListItemIcon> location_on </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Dirección: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.direccion === '' ? 'Sin especificar' :
+                    this.obra.direccion }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item>
+                <mat-icon matListItemIcon> description </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Observaciones: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.descripcion === '' ? 'Sin especificar' :
+                    this.obra.descripcion }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item>
+                <mat-icon matListItemIcon> local_atm </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Precio total: </span>
+                  <span style="margin-left: 5px;"> ${{ this.obra?.precio | moneda }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+              <mat-list-item *ngIf="this.obra.estado === 'Finalizada'">
+                <mat-icon matListItemIcon> task </mat-icon>
+                <div matListItemTitle>
+                  <span style="font-weight: 500; margin-left: 5px;"> Fecha finalización: </span>
+                  <span style="margin-left: 5px;"> {{ this.obra?.fecha_finalizacion | fecha }} </span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+
+            </mat-list>
+
+          </div>
+
+          <div class="subtitulo-detalles">
+            <h2 style="margin-top: 20px;"> LISTADO DE MUEBLES </h2>
+            <div>
+              <button mat-icon-button [matMenuTriggerFor]="menu_usuario">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu_usuario="matMenu">
+                <button *appPermisos="permisosTotales" (click)="openModalMueble('Crear')" mat-menu-item>
+                  <mat-icon> add </mat-icon>
+                  <span> Nuevo mueble </span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+
+          <div *ngIf="muebles.length === 0">
+            <p style="color: gray;"> No se encontraron muebles asociados a esta obra </p>
+            <button (click)="openModalMueble('Crear')" mat-raised-button color="primary">
               Agregar mueble
             </button>
           </div>
-        </div>
 
-        <div *ngIf="muebles && muebles.length > 0" class="p-2">
-          <div *ngFor="let mueble of muebles" (click)="abrirEditarMueble(mueble)" title="Editar mueble"
-            class="border text-sm mt-2 cursor-pointer hover:bg-red-50 hover:border-secondaryColor shadow flex border-gray-400 p-2">
-            <img class="w-16 md:w-20" src="assets/img/mueble.svg" alt="mueble.svg">
-            <div class="ml-4">
-              <p class="mt-1 text-xs md:text-sm"> <span class="font-semibold"> Código de mueble: </span> M{{ mueble.id
-                }} </p>
-              <p class="mt-1 text-xs md:text-sm"> <span class="font-semibold"> Precio: </span> ${{ mueble.precio |
-                moneda }} </p>
-              <p class="mt-1 text-xs md:text-sm"> <span class="font-semibold"> Tipo de mueble: </span> {{
-                mueble.tipo_mueble.descripcion }} </p>
-              <p *ngIf="mueble.observaciones.trim() !== ''" class="mt-1"> <span class="font-semibold"> Observaciones:
-                </span> {{ mueble.observaciones }} </p>
-              <div *ngIf="mueble.muebles_placas.length > 0" class="flex items-center mt-1 text-xs md:text-sm">
-                <span class="font-semibold"> Placas: </span>
-                <div class="ml-2 text-xs p-1 bg-gray-100 border text-black border-gray-400"
-                  *ngFor="let placa of mueble.muebles_placas">
-                  <span> {{ placa.tipo_placa_madera.codigo }} </span>
+          <div (click)="openModalMueble('Editar', mueble)" style="border-left: 10px solid #673AB7"
+            *ngFor="let mueble of muebles" class="container-muebles">
+            <p><span style="font-weight: 500;"> Codigo de mueble: </span> <span> MA{{ mueble.id }} </span></p>
+            <p><span style="font-weight: 500;"> Precio: </span> <span> ${{ mueble.precio | moneda }} </span></p>
+            <p><span style="font-weight: 500;"> Tipos de mueble: </span> <span> {{ mueble.tipo_mueble.descripcion }}
+              </span></p>
+          </div>
+
+          <!-- <div>
+
+            <div *ngIf="muebles.length !== 0">
+
+              <mat-form-field style="width: 100%;">
+                <mat-label>Buscar</mat-label>
+                <input matInput (keyup)="filtradoTablaMuebles($event)" placeholder="Ej. Cocina" #input>
+              </mat-form-field>
+
+              <div class="material-container">
+
+                <div class="material-loading-shade" *ngIf="isLoadingResultsMuebles || isRateLimitReachedMuebles">
+                  <mat-spinner *ngIf="isLoadingResultsMuebles"></mat-spinner>
+                  <div class="material-rate-limit-reached" *ngIf="isRateLimitReachedMuebles">
+                    GitHub's API rate limit has been reached. It will be reset in one minute.
+                  </div>
                 </div>
+
+                <div class="material-table-container">
+
+                  <table mat-table [dataSource]="dataSourceMuebles" class="example-table"
+                    (matSortChange)="ordenarTablaMuebles($event)" matSort>
+
+                    <ng-container matColumnDef="opciones">
+                      <th mat-header-cell *matHeaderCellDef> Opciones </th>
+                      <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button [matMenuTriggerFor]="menu_fila">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu_fila="matMenu">
+                          <button (click)="openModalMueble('Editar', row)" mat-menu-item>
+                            <mat-icon> edit </mat-icon>
+                            <span> Editar </span>
+                          </button>
+                          <button (click)="eliminarMueble(row)" mat-menu-item>
+                            <mat-icon> delete </mat-icon>
+                            <span> Eliminar </span>
+                          </button>
+                        </mat-menu>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por codigo">
+                        Código</th>
+                      <td mat-cell *matCellDef="let row">M{{ row.id }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="precio">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por precio">
+                        Precio</th>
+                      <td mat-cell *matCellDef="let row">${{ row.precio | moneda }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="tipo_mueble">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por tipo">
+                        Tipo de mueble</th>
+                      <td mat-cell *matCellDef="let row">{{ row.tipo_mueble.descripcion}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="createdAt">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por fecha">
+                        Fecha de creación</th>
+                      <td mat-cell *matCellDef="let row">{{row.createdAt | fecha}}</td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsMuebles"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsMuebles;"></tr>
+
+                    <tr class="filter-texto" *matNoDataRow>
+                      <td>No se encontraron resultados que contenga <b> "{{input.value}}" </b> </td>
+                    </tr>
+
+                  </table>
+                </div>
+
+                <mat-paginator [pageSizeOptions]="[10,20,50,100]" showFirstLastButtons></mat-paginator>
               </div>
+
+            </div>
+
+          </div> -->
+
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+
+        <ng-template mat-tab-label>
+          Ordenes de matenimiento
+        </ng-template>
+
+        <div class="container-detalles">
+
+          <div class="subtitulo-detalles">
+
+            <h2 style="margin-top: 20px;"> ORDENES DE MANTENIMIENTO </h2>
+
+            <div style="display: flex;">
+              <div>
+                <button mat-icon-button [matMenuTriggerFor]="menu_ordenes">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu_ordenes="matMenu">
+                  <button *appPermisos="permisosTotales" (click)="openModalOrdenMantenimiento()" mat-menu-item>
+                    <mat-icon> add </mat-icon>
+                    <span> Nueva orden </span>
+                  </button>
+                </mat-menu>
+              </div>
+              <div>
+                <button mat-icon-button [matMenuTriggerFor]="menu_ordenar_ordenes">
+                  <mat-icon>filter_list</mat-icon>
+                </button>
+                <mat-menu #menu_ordenar_ordenes="matMenu">
+                  <button *ngIf="ordenarOrdenesMantenimiento.direccion === 1"
+                    (click)="ordenarOrdenesMantenimientoFnc(-1)" mat-menu-item>
+                    <mat-icon> arrow_upward_alt </mat-icon>
+                    <span> Ascendente </span>
+                  </button>
+                  <button *ngIf="ordenarOrdenesMantenimiento.direccion === -1"
+                    (click)="ordenarOrdenesMantenimientoFnc(1)" mat-menu-item>
+                    <mat-icon> arrow_downward_alt </mat-icon>
+                    <span> Descendente </span>
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+
+          </div>
+
+          <div *ngIf="ordenesMantenimiento.length === 0">
+            <p style="color: gray; font-size: 14px;"> No se encontraron ordenes asociadas a esta obra </p>
+            <button (click)="openModalOrdenMantenimiento()" mat-raised-button color="primary">
+              Agregar orden
+            </button>
+          </div>
+
+          <div *ngIf="ordenesMantenimiento.length > 0">
+            <div [ngClass]="{'container-ordenes-alert': orden.observaciones === '' || !orden.precio}"
+              (click)="openModalOrdenMantenimiento('Editar', orden)" style="border-left: 10px solid #673AB7"
+              class="container-ordenes" *ngFor="let orden of ordenesMantenimiento">
+              <p> <span style="font-weight: 500;"> Fecha: </span> <span> {{ orden.fecha | fecha }} </span> </p>
+              <p> <span style="font-weight: 500;"> Nro de orden: </span> <span> {{ orden.id }} </span> </p>
+              <p> <span style="font-weight: 500;"> Precio: </span> <span> {{ orden.precio ? '$' + (orden.precio |
+                  moneda) : 'Sin especificar' }} </span> </p>
+              <p> <span style="font-weight: 500;"> Observaciones: </span> <span> {{ orden.observaciones === '' ? 'Sin
+                  especificar' : orden.observaciones }} </span> </p>
             </div>
           </div>
         </div>
+      </mat-tab>
 
-      </div>
-    </div>
-
-    <!-- Historial de pases -->
-    <div *ngIf="showContenidoSeccion === 'Historial_Pases'" class="mt-2 text-sm">
-
-      <!-- No hay pases en la obra -->
-      <div *ngIf="pases.length <= 0">
-        <p class="text-gray-700 bg-gray-100 border p-2 border-gray-400"> No se encontraron pases en esta obra </p>
-      </div>
-
-      <!-- Listado de pases -->
-      <div class="p-2 text-sm max-h-96 overflow-y-auto" *ngIf="pases.length > 0">
-        <div *ngFor="let pase of pases" class="border mb-2 border-gray-400">
-          <div [ngClass]="{ 'border-red-200':pase.tipo === 'Atras', 'border-green-200':pase.tipo === 'Adelante' }"
-            class="border-l-8 p-2">
-
-            <p class="text-xs md:text-sm"> <span class="font-semibold"> Fecha: </span> <span> {{ pase.createdAt | fecha
-                }} </span> </p>
-
-            <div class="flex items-center text-xs md:text-sm">
-
-              <div
-                [ngClass]="{'bg-yellow-100 border-yellow-300' : pase.etapa_anterior === 'Pendiente', 'bg-orange-100 border-orange-300' : pase.etapa_anterior === 'Produccion', 'bg-blue-100 border-blue-300' : pase.etapa_anterior === 'Colocacion', 'bg-green-100 border-green-300' : pase.etapa_anterior === 'Finalizada'}"
-                *ngIf="pase.tipo === 'Adelante'" class="mt-1 border rounded p-1">
-                {{ pase.etapa_anterior }}
-              </div>
-
-              <div
-                [ngClass]="{'bg-yellow-100 border-yellow-300' : pase.etapa_actual === 'Pendiente', 'bg-orange-100 border-orange-300' : pase.etapa_actual === 'Produccion', 'bg-blue-100 border-blue-300' : pase.etapa_actual === 'Colocacion', 'bg-green-100 border-green-300' : pase.etapa_actual === 'Finalizada'}"
-                *ngIf="pase.tipo === 'Atras'" class="mt-1 border rounded p-1">
-                {{ pase.etapa_actual }}
-              </div>
-
-              <div class="ml-1 mt-1">
-                <svg *ngIf="pase.tipo === 'Adelante'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                </svg>
-                <svg *ngIf="pase.tipo === 'Atras'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
-                </svg>
-              </div>
-
-              <div *ngIf="pase.tipo === 'Adelante'" class="mt-1 ml-1 border rounded p-1"
-                [ngClass]="{'bg-yellow-100 border-yellow-300' : pase.etapa_actual === 'Pendiente', 'bg-orange-100 border-orange-300' : pase.etapa_actual === 'Produccion', 'bg-blue-100 border-blue-300' : pase.etapa_actual === 'Colocacion', 'bg-green-100 border-green-300' : pase.etapa_actual === 'Finalizada'}">
-                {{ pase.etapa_actual }}
-              </div>
-
-              <div *ngIf="pase.tipo === 'Atras'" class="mt-1 ml-1 border rounded p-1"
-                [ngClass]="{'bg-yellow-100 border-yellow-300' : pase.etapa_anterior === 'Pendiente', 'bg-orange-100 border-orange-300' : pase.etapa_anterior === 'Produccion', 'bg-blue-100 border-blue-300' : pase.etapa_anterior === 'Colocacion', 'bg-green-100 border-green-300' : pase.etapa_anterior === 'Finalizada'}">
-                {{ pase.etapa_anterior }}
-              </div>
-
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Historial de pases
+        </ng-template>
+        <div class="container-detalles">
+          <div class="subtitulo-detalles">
+            <h2 style="margin-top: 20px;"> HISTORIAL DE PASES </h2>
+            <div>
+              <button mat-icon-button [matMenuTriggerFor]="menu_ordenar_pases">
+                <mat-icon>filter_list</mat-icon>
+              </button>
+              <mat-menu #menu_ordenar_pases="matMenu">
+                <button *ngIf="ordenarHistorialPases.direccion === 1" (click)="ordenarHistorialPasesFnc(-1)"
+                  mat-menu-item>
+                  <mat-icon> arrow_upward_alt </mat-icon>
+                  <span> Ascendente </span>
+                </button>
+                <button *ngIf="ordenarHistorialPases.direccion === -1" (click)="ordenarHistorialPasesFnc(1)"
+                  mat-menu-item>
+                  <mat-icon> arrow_downward_alt </mat-icon>
+                  <span> Descendente </span>
+                </button>
+              </mat-menu>
             </div>
+          </div>
 
-            <p class="mt-2 text-xs md:text-sm" *ngIf="pase.tipo === 'Atras'"> <span class="font-semibold"> Tipo de pase:
-              </span> <span> {{ pase.motivo.descripcion }} </span> </p>
+          <div *ngIf="pases.length === 0">
+            <p style="color: gray; font-size: 14px;"> No se encontraron pases asociados a esta obra </p>
+          </div>
 
-            <p class="mt-2 text-xs md:text-sm" *ngIf="pase.observacion !== ''"> <span class="font-semibold">
-                Observación: </span> <span> {{ pase.observacion }} </span> </p>
-
-            <p class="mt-2 text-xs md:text-sm"> <span class="font-semibold"> Realizó el pase: </span> <span> {{
-                pase.creatorUser.apellido }} {{ pase.creatorUser.nombre }} </span> </p>
-
+          <div *ngIf="pases.length > 0">
+            <div [ngClass]="{'paseAdelante':pase.tipo === 'Adelante', 'paseAtras':pase.tipo === 'Atras'}"
+              *ngFor="let pase of pases" class="container-pases">
+              <p> <span style="font-weight: 500;"> Fecha: </span> <span> {{ pase.createdAt | fecha }} </span> </p>
+              <p style="display: flex; align-items: center;">
+                <span> {{ pase.etapa_anterior }} </span>
+                <span *ngIf="pase.tipo === 'Adelante'" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
+                  <mat-icon> east </mat-icon> </span>
+                <span *ngIf="pase.tipo === 'Atras'" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
+                  <mat-icon> west </mat-icon> </span>
+                <span> {{ pase.etapa_actual }} </span>
+              </p>
+              <p> <span style="font-weight: 500;"> Realizado por: </span> <span> {{ pase.creatorUser.apellido }} {{
+                  pase.creatorUser.nombre }} </span> </p>
+            </div>
           </div>
         </div>
-      </div>
+      </mat-tab>
 
-    </div>
+    </mat-tab-group>
 
-  </div>
-</div>
+  </mat-card-content>
+
+
+
+</mat-card>

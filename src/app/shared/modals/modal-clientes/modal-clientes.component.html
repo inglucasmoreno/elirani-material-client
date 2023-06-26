@@ -1,0 +1,48 @@
+<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nuevo cliente' : 'Editando cliente' }} </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Nombre o Razon social </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearCliente() : actualizarCliente()"
+      [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Equinoccio Technology">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Tipo de identificación </mat-label>
+    <mat-select [(ngModel)]="dataOutput.tipo_identificacion">
+      <mat-option value="DNI">DNI</mat-option>
+      <mat-option value="CUIL">CUIL</mat-option>
+      <mat-option value="CUIT">CUIT</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> Identificación </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearCliente() : actualizarCliente()"
+      [(ngModel)]="dataOutput.identificacion" matInput #input placeholder="Ej. 24340603989">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Telefono </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearCliente() : actualizarCliente()"
+      [(ngModel)]="dataOutput.telefono" matInput #input placeholder="Ej. 2664869642">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> Direccion </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearCliente() : actualizarCliente()"
+      [(ngModel)]="dataOutput.direccion" matInput #input placeholder="Ej. Portugal 1030">
+  </mat-form-field>
+
+  <mat-slide-toggle [(ngModel)]="dataOutput.activo">
+    {{ dataOutput.activo ? 'Cliente activo' : 'Cliente inactivo' }}
+  </mat-slide-toggle>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearCliente() : actualizarCliente()" mat-raised-button color="primary">
+    {{ dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

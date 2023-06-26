@@ -52,7 +52,7 @@ const routes: Routes = [
             // Madera
             { path: 'obras-madera', data: { permisos: ['MADERA_ALL', 'MADERA_READ'] }, canActivate: [PermisosGuard], component: ObrasMaderaComponent },
             { path: 'obras-madera/detalles/:id', data: { permisos: ['MADERA_ALL', 'MADERA_READ'] }, canActivate: [PermisosGuard], component: ObrasMaderaDetallesComponent },
-            { path: 'ordenes-matenimiento-madera', data: { permisos: ['MADERA_ALL', 'MADERA_READ'] }, canActivate: [PermisosGuard], component: OrdenesMatenimientoMaderaComponent },
+            { path: 'ordenes-mantenimiento-madera', data: { permisos: ['MADERA_ALL', 'MADERA_READ'] }, canActivate: [PermisosGuard], component: OrdenesMatenimientoMaderaComponent },
             { path: 'tipos-muebles', data: { permisos: ['CONFIG_MADERA_ALL', 'CONFIG_MADERA_READ'] }, canActivate: [PermisosGuard], component: TiposMueblesComponent },
             { path: 'tipos-placas', data: { permisos: ['CONFIG_MADERA_ALL', 'CONFIG_MADERA_READ'] }, canActivate: [PermisosGuard], component: TiposPlacasComponent },
             { path: 'obras-madera-motivos-pases', data: { permisos: ['CONFIG_MADERA_ALL', 'CONFIG_MADERA_READ'] }, canActivate: [PermisosGuard], component: ObrasMaderaMotivosPasesComponent },

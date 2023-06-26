@@ -2377,6 +2377,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/file-saver-es@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/file-saver-es/-/file-saver-es-2.0.1.tgz#51147090299e110e79a9e67df21913e53b4bf484"
+  integrity sha512-ifoocKtUTJCQ4GMKBm+EK8Swk9DzrWfHhxGJ3jdhFijT9UJzA4P97zoq3Qii9QU51pSe3JwbS1i6s0nifOWHwg==
+
 "@types/http-proxy@^1.17.8":
   version "1.17.11"
   resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.11.tgz#0ca21949a5588d55ac2b659b69035c84bd5da293"
@@ -3889,6 +3894,11 @@ figures@^3.0.0:
   integrity sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==
   dependencies:
     escape-string-regexp "^1.0.5"
+
+file-saver-es@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver-es/-/file-saver-es-2.0.5.tgz#5afcb95c3c9884b9cf0852046ec60d46b676790c"
+  integrity sha512-Kg0lt+is9nOyi/VDms9miScNGot25jVFbjFccXuCL/shd2Q+rt70MALxHVkXllsX83JEBLiHQNjDPGd/6FIOoQ==
 
 fill-range@^7.0.1:
   version "7.0.1"

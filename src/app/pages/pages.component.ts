@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./pages.component.scss']
 })
 export class PagesComponent {
-
+  public showMenu = true;
 }

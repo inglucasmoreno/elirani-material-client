@@ -1,0 +1,47 @@
+.header {
+  height: 60px;
+}
+
+.header-spacer {
+  flex: 1 1 auto;
+}
+
+.header-data-user {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-usuario {
+  font-weight: 500;
+  font-size: 15px;
+  margin-top: 0;
+  text-transform: capitalize;
+}
+
+.header-role {
+  font-size: 12px;
+}
+
+mat-menu {
+  width: 400px;
+}
+
+.link-activo {
+  background-color: #ceb6f8;
+}
+
+
+.example-container {
+  height: calc(100% - 60px); // Largo total - Barra de navegacion
+}
+
+.example-sidenav-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar {
+  width: 250px;
+  // padding: 20px;
+}

@@ -1,0 +1,66 @@
+
+<h1 mat-dialog-title> Actualizando permisos </h1>
+
+<h4 class="subtitle"> 
+  <mat-icon> person </mat-icon>
+  <span style="margin-left: 5px;">
+    {{ dataInput.usuario.apellido }} {{ dataInput.usuario.nombre }} 
+  </span>
+</h4>
+
+<div class="modal-body" mat-dialog-content>
+
+  <div class="example-container">
+
+    <p> PERMISOS DE SECCIONES </p>
+
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Clientes </mat-label>
+      <mat-select [(ngModel)]="dataOutput.clientes">
+        <mat-option value="CLIENTES_ALL"> Permiso total </mat-option>
+        <mat-option value="CLIENTES_READ"> Solo lectura </mat-option>
+        <mat-option value="CLIENTES_NOT"> Sin acceso </mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Madera </mat-label>
+      <mat-select [(ngModel)]="dataOutput.madera">
+        <mat-option value="MADERA_ALL"> Permiso total </mat-option>
+        <mat-option value="MADERA_READ"> Solo lectura </mat-option>
+        <mat-option value="MADERA_NOT"> Sin acceso </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <p> PERMISOS DE CONFIGURACIONES </p>
+
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Generales </mat-label>
+      <mat-select [(ngModel)]="dataOutput.config_generales">
+        <mat-option value="CONFIG_GENERALES_ALL"> Permiso total </mat-option>
+        <mat-option value="CONFIG_GENERALES_READ"> Solo lectura </mat-option>
+        <mat-option value="CONFIG_GENERALES_NOT"> Sin acceso </mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Madera </mat-label>
+      <mat-select [(ngModel)]="dataOutput.config_madera">
+        <mat-option value="CONFIG_MADERA_ALL"> Permiso total </mat-option>
+        <mat-option value="CONFIG_MADERA_READ"> Solo lectura </mat-option>
+        <mat-option value="CONFIG_MADERA_NOT"> Sin acceso </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </div>
+
+  
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="actualizarPermisos()" mat-raised-button color="primary"> Actualizar </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>
+
+

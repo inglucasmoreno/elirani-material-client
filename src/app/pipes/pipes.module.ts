@@ -7,6 +7,7 @@ import { FiltroUsuariosPipe } from './filtro-usuarios.pipe';
 import { FiltroClientesPipe } from './filtro-clientes.pipe';
 import { CodigoMaderaPipe } from './codigo-madera.pipe';
 import { FiltroPlacasMaderaPipe } from './filtro-placas-madera.pipe';
+import { LimiteCaracteresPipe } from './limite-caracteres.pipe';
 
 
 
@@ -18,7 +19,8 @@ import { FiltroPlacasMaderaPipe } from './filtro-placas-madera.pipe';
     FiltroUsuariosPipe,
     FiltroClientesPipe,
     CodigoMaderaPipe,
-    FiltroPlacasMaderaPipe
+    FiltroPlacasMaderaPipe,
+    LimiteCaracteresPipe
   ],
   imports: [
     CommonModule
@@ -30,7 +32,8 @@ import { FiltroPlacasMaderaPipe } from './filtro-placas-madera.pipe';
     FiltroUsuariosPipe,
     FiltroClientesPipe,
     CodigoMaderaPipe,
-    FiltroPlacasMaderaPipe
+    FiltroPlacasMaderaPipe,
+    LimiteCaracteresPipe
   ]
 })
 export class PipesModule { }

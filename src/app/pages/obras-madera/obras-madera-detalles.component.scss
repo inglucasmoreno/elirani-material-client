@@ -1,0 +1,211 @@
+.mat-mdc-form-field {
+  margin-top: 16px;
+}
+
+mat-card {
+  margin: 20px;
+}
+
+// ETAPAS
+.container-etapas {
+  display: flex;
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+
+.items-etapas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid gray;
+  padding: 10px;
+  width: 25%;
+  color: #6b6b6b;
+}
+
+.items-etapas-secundarios {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid gray;
+  border-left: none;
+  padding: 10px;
+  width: 25%;
+  color: #6b6b6b;
+}
+
+.etapa-seleccionada {
+  background-color: #673AB7;
+  color: white;
+}
+
+// CONTENIDO
+
+.card-principal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container-detalles {
+  padding: 20px;
+}
+
+.item-detalles {
+  display: flex;
+  align-items: center;
+}
+
+.subtitulo-detalles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-muebles {
+  border: 1px solid #D8D8D8
+}
+
+.item-muebles {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+/* Structure */
+.material-container {
+  position: relative;
+}
+
+// TABLAS
+
+.material-table-container {
+  position: relative;
+  min-height: 200px;
+  max-height: 400px;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.material-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.material-rate-limit-reached {
+  max-width: 360px;
+  text-align: center;
+}
+
+/* Column Widths */
+.mat-column-number,
+.mat-column-state {
+  max-width: 64px;
+}
+
+.mat-column-created {
+  max-width: 124px;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.filter-texto {
+  margin-top: 10px;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+// TABS
+
+.mat-tab-group-vertical {
+  width: 200px;
+  height: 300px;
+}
+
+// MUEBLES
+
+.container-muebles {
+  border: 1px solid gray;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.container-muebles:hover {
+  border: 1px solid #673AB7;
+  cursor: pointer;
+}
+
+// HISTORIAL DE PASES
+
+.container-pases {
+  border: 1px solid gray;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.paseAdelante {
+  border-left: 10px solid green;
+}
+
+.paseAtras {
+  border-left: 10px solid red;
+}
+
+// ORDENES DE MANTENIMIENTO
+
+.container-ordenes {
+  border: 1px solid gray;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.container-ordenes:hover {
+  border: 1px solid #673AB7;
+  cursor: pointer;
+}
+
+.container-ordenes-alert {
+  background-color: #f6f1ff
+}
+
+/* Estilos para pantallas más pequeñas, como smartphones */
+@media (max-width: 767px) {
+
+  .container-etapas {
+    display: block;
+    width: 100%;
+  }
+
+  .items-etapas {
+    width: 95%;
+  }
+
+  .items-etapas-secundarios {
+    width: 95%;
+    border-left: 1px solid gray;
+    border-top: none;
+  }
+
+}
+
+/* Estilos para pantallas medianas, como tablets */
+@media (min-width: 768px) and (max-width: 1023px) {}
+
+/* Estilos para pantallas más grandes, como computadoras de escritorio */
+@media (min-width: 1024px) {}

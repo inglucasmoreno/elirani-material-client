@@ -1,8 +1,13 @@
-import { Component } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from 'src/app/services/alert.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { ObrasMaderaMotivosPasesService } from 'src/app/services/obras-madera-motivos-pases.service';
+import { ModalObrasMaderaMotivosPasesComponent } from 'src/app/shared/modals/modal-obras-madera-motivos-pases/modal-obras-madera-motivos-pases.component';
 
 @Component({
   selector: 'app-obras-madera-motivos-pases',
@@ -11,29 +16,23 @@ import { ObrasMaderaMotivosPasesService } from 'src/app/services/obras-madera-mo
 })
 export class ObrasMaderaMotivosPasesComponent {
 
-  // Modal
-  public showModalMotivo = false;
+  public permisosTotales = ['CONFIG_MADERA_ALL'];
+  public displayedColumns: string[] = ['opciones','descripcion', 'createdAt', 'activo'];
+  public dataSource = new MatTableDataSource<any>();
 
-  // Estado formulario 
-  public estadoFormulario = 'crear';
+  public resultsLength = 0;
+  public isLoadingResults = true;
+  public isRateLimitReached = false;
 
-  // Motivo de pases
-  public idMotivo: number = 0;
+  // Motivos de pases
   public motivos: any = [];
-  public motivoSeleccionado: any;
-
-  // DataForm - Motivo
-  public descripcion: string = ''; // Motivo de pase
 
   // Paginacion
   public totalItems: number = 0;
-  public desde: number = 0;
-  public paginaActual: number = 1;
-  public cantidadItems: number = 10;
 
   // Filtrado
   public filtro = {
-    activo: 'true',
+    activo: '',
     parametro: ''
   }
 
@@ -44,166 +43,92 @@ export class ObrasMaderaMotivosPasesComponent {
   }
 
   constructor(
+    public dialog: MatDialog,
     private motivosService: ObrasMaderaMotivosPasesService,
-    private authService: AuthService,
     private alertService: AlertService,
-    private dataService: DataService
+    private dataService: DataService,
+    private _liveAnnouncer: LiveAnnouncer
   ) { }
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   ngOnInit(): void {
-    this.dataService.ubicacionActual = 'Dashboard - Motivos';
-    // this.permisos.all = this.permisosUsuarioLogin();
+    this.dataService.ubicacionActual = 'Dashboard - Motivos de pases';
     this.alertService.loading();
     this.listarMotivos();
   }
 
-  // Asignar permisos de usuario login
-  // permisosUsuarioLogin(): boolean {
-  //   return this.authService.usuario.permisos.includes('PERSONAS_ALL') || this.authService.usuario.role === 'ADMIN_ROLE';
-  // }
+  public openModal(accion: string = 'Crear', elemento: any = {}): void {
 
-  // Abrir modal
-  abrirModal(estado: string, motivo: any = null): void {
-    this.reiniciarFormulario();
+    let dataForm: any = {}
 
-    this.idMotivo = 0;
-
-    if (estado === 'editar') {
-      this.idMotivo = motivo.id;
-      this.motivoSeleccionado = motivo;
-      this.descripcion = motivo.descripcion;
+    if(accion === 'Editar'){      
+      dataForm = {
+        id: elemento.id,
+        descripcion: elemento.descripcion,
+        activo: elemento.activo,
+      }
+    }else{
+      dataForm = {
+        id: 0,
+        descripcion: '',
+        activo: true,
+      }
     }
 
-    this.estadoFormulario = estado;
-    this.showModalMotivo = true;
+    const dialogRef = this.dialog.open(ModalObrasMaderaMotivosPasesComponent, {
+      width: '500px',
+      data: {
+        accion,
+        dataForm
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(() => { this.listarMotivos(); });
+
+  }
+
+  filtradoTabla(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  ordenarTabla(sortState: any) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   // Listar motivos
   listarMotivos(): void {
+
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
       activo: this.filtro.activo,
       parametro: this.filtro.parametro,
-      desde: this.desde,
-      cantidadItems: this.cantidadItems,
     }
+
     this.motivosService.listarMotivos(parametros).subscribe({
-      next: ({ motivos, totalItems }: any) => {
+      next: ({ motivos, totalItems }) => {
         this.motivos = motivos;
         this.totalItems = totalItems;
-        this.showModalMotivo = false;
+        this.resultsLength = totalItems;
+        this.dataSource.data = motivos;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.isLoadingResults = false;
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
 
-  }
-
-  // Nuevo motivo
-  nuevoMotivo(): void {
-
-    // Verificacion: Descripcion vacia
-    if (this.descripcion.trim() === "") {
-      this.alertService.info('Debes colocar una descripcion');
-      return;
-    }
-
-    this.alertService.loading();
-
-    const data = {
-      descripcion: this.descripcion, // Razon social
-      creatorUser: this.authService.usuario.userId,
-      updatorUser: this.authService.usuario.userId,
-    }
-
-    this.motivosService.nuevoMotivo(data).subscribe({
-      next: () => {
-        this.listarMotivos();
-      }, error: ({ error }) => this.alertService.errorApi(error.message)
-    })
-
-  }
-
-  // Actualizar motivo
-  actualizarMotivo(): void {
-
-    // Verificacion: Descripcion vacia
-    if (this.descripcion.trim() === "") {
-      this.alertService.info('Debes colocar una descripcion');
-      return;
-    }
-
-    this.alertService.loading();
-
-    const data = {
-      descripcion: this.descripcion, // Razon social
-      updatorUser: this.authService.usuario.userId,
-    }
-
-    this.motivosService.actualizarMotivo(this.idMotivo, data).subscribe({
-      next: () => {
-        this.listarMotivos();
-      }, error: ({ error }) => this.alertService.errorApi(error.message)
-    })
-
-  }
-
-  // Actualizar estado Activo/Inactivo
-  actualizarEstado(motivo: any): void {
-
-    const { id, activo } = motivo;
-
-    this.alertService.question({ msg: '¿Quieres actualizar el estado?', buttonText: 'Actualizar' })
-      .then(({ isConfirmed }: any) => {
-        if (isConfirmed) {
-          this.alertService.loading();
-          this.motivosService.actualizarMotivo(id, { activo: !activo }).subscribe({
-            next: () => {
-              this.listarMotivos(); 
-            }, error: ({ error }) => this.alertService.errorApi(error.message)
-          })
-        }
-      });
-
-  }
-
-  // Reiniciando formulario
-  reiniciarFormulario(): void {
-    this.descripcion = ''; // Razon social
-  }
-
-  // Filtrar Activo/Inactivo
-  filtrarActivos(activo: any): void {
-    this.paginaActual = 1;
-    this.filtro.activo = activo;
-  }
-
-  // Filtrar por Parametro
-  filtrarParametro(parametro: string): void {
-    this.paginaActual = 1;
-    this.filtro.parametro = parametro;
-  }
-
-  // Ordenar por columna
-  ordenarPorColumna(columna: string) {
-    this.ordenar.columna = columna;
-    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
-    this.alertService.loading();
-    this.listarMotivos();
-  }
-
-  // Cambiar cantidad de items
-  cambiarCantidadItems(): void {
-    this.paginaActual = 1
-    this.cambiarPagina(1);
-  }
-
-  // Paginacion - Cambiar pagina
-  cambiarPagina(nroPagina: number): void {
-    this.paginaActual = nroPagina;
-    this.desde = (this.paginaActual - 1) * this.cantidadItems;
-    this.alertService.loading();
-    this.listarMotivos();
   }
 
 }

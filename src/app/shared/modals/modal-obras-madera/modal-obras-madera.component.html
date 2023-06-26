@@ -1,0 +1,47 @@
+<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nueva obra' : 'Editando obra' }} </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <ng-select [(ngModel)]="dataOutput.cliente" class="custom-ng-select" placeholder="Cliente">
+    <ng-option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.descripcion }} </ng-option>
+  </ng-select>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Número de obra </mat-label>
+    <input [(ngModel)]="dataOutput.codigo" (keyup.enter)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()" [(ngModel)]="dataOutput.codigo"
+      matInput #input placeholder="Ej. 1">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Fecha de inicio </mat-label>
+    <input [(ngModel)]="dataOutput.fecha_inicio" disabled matInput [matDatepicker]="fecha_inicio">
+    <mat-datepicker-toggle matIconSuffix [for]="fecha_inicio"></mat-datepicker-toggle>
+    <mat-datepicker #fecha_inicio></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> Fecha de colocación </mat-label>
+    <input [(ngModel)]="dataOutput.fecha_finalizacion_estimada" matInput [matDatepicker]="fecha_colocacion">
+    <mat-datepicker-toggle matIconSuffix [for]="fecha_colocacion"></mat-datepicker-toggle>
+    <mat-datepicker #fecha_colocacion></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Direccion </mat-label>
+    <input [(ngModel)]="dataOutput.direccion" (keyup.enter)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()"
+      [(ngModel)]="dataOutput.direccion" matInput #input placeholder="Ej. Pringles 539">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> Observaciones </mat-label>
+    <input [(ngModel)]="dataOutput.descripcion" (keyup.enter)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()"
+      [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Observaciones no obligatorias">
+  </mat-form-field>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()" mat-raised-button color="primary"> {{
+    dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

@@ -1,0 +1,26 @@
+<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nuevo tipo de mueble' : 'Editando tipo de mueble' }} </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Descripción </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearTipo() : actualizarTipo()"
+      [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Baranda">
+  </mat-form-field>
+
+  <div>
+    <mat-slide-toggle [(ngModel)]="dataOutput.placas">
+      {{ dataOutput.placas ? 'Con placas' : 'Sin placas' }}
+    </mat-slide-toggle>
+    <mat-slide-toggle style="margin-left: 20px;" [(ngModel)]="dataOutput.activo">
+      {{ dataOutput.activo ? 'Tipo activo' : 'Tipo inactivo' }}
+    </mat-slide-toggle>
+  </div>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearTipo() : actualizarTipo()" mat-raised-button color="primary"> {{
+    dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

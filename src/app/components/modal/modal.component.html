@@ -1,4 +1,11 @@
-<div *ngIf="showModal" class="z-20 absolute w-11/12 mt-10">
+
+<h1 mat-dialog-title>Dialog with elements</h1>
+<div mat-dialog-content>This dialog showcases the title, close, content and actions elements.</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</div>
+
+<!-- <div *ngIf="showModal" class="z-20 absolute w-11/12 mt-10">
     
   <div class="flex items-center justify-center absolute top-0 left-200 w-11/12"></div>
   
@@ -8,9 +15,8 @@
       </div>
   </div>
   
-  <!-- Fondo -->
   <div name="custom" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
       <div *ngIf="showModal" class="bg-gray-700 bg-opacity-50 fixed bottom-0 left-0 w-full h-full transition duration-500 ease-in-out transfom"></div>
   </div>
 
-</div>
+</div> -->

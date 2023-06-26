@@ -1,0 +1,30 @@
+<h1 mat-dialog-title> Generando pase </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Etapa </mat-label>
+    <mat-select [(ngModel)]="dataOutput.etapa_actual">
+      <mat-option *ngFor="let etapa of listadoEtapas" [value]="etapa"> {{ etapa }} </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Motivo </mat-label>
+    <mat-select [(ngModel)]="dataOutput.motivo">
+      <mat-option *ngFor="let motivo of motivos" [value]="motivo.id"> {{ motivo.descripcion }} </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label> Observaciones </mat-label>
+    <input (keyup.enter)="crearPase()"
+      [(ngModel)]="dataOutput.observacion" matInput #input placeholder="Ej. Observaciones no obligatorias">
+  </mat-form-field>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="crearPase()" mat-raised-button color="primary"> Generar </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

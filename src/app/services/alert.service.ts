@@ -11,6 +11,7 @@ interface InputAlert {
 })
 export class AlertService {
 
+  public colorButton: string = '#673AB7';
 
   constructor() { }
   
@@ -23,7 +24,7 @@ export class AlertService {
       showCancelButton: true,
       confirmButtonText: buttonText,
       cancelButtonText: 'Cancelar', 
-      confirmButtonColor: '#A31D1E'
+      confirmButtonColor: this.colorButton
     });
   }
 
@@ -45,7 +46,7 @@ export class AlertService {
       title: 'Información',
       text: msg,
       confirmButtonText: 'Entendido',
-      confirmButtonColor: '#A31D1E'
+      confirmButtonColor: this.colorButton
     });  
   }
 
@@ -56,7 +57,7 @@ export class AlertService {
         title: 'Información',
         text: 'Formulario Inválido',
         confirmButtonText: 'Entendido',
-        confirmButtonColor: '#A31D1E'
+        confirmButtonColor: this.colorButton
       });    
   }   
 
@@ -67,7 +68,7 @@ export class AlertService {
       title: 'Error',
       text: msg,
       confirmButtonText: 'Entendido',
-      confirmButtonColor: '#A31D1E'
+      confirmButtonColor: this.colorButton
     });    
   }
 

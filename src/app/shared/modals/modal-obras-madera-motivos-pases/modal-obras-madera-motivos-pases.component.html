@@ -1,0 +1,21 @@
+<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nuevo motivo' : 'Editando motivo' }} </h1>
+
+<div class="modal-body" mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label> <span style="color: red"> * </span> Descripción </mat-label>
+    <input (keyup.enter)="dataInput.accion === 'Crear' ? crearMotivo() : actualizarMotivo()"
+      [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Por falta de materiales">
+  </mat-form-field>
+
+  <mat-slide-toggle [(ngModel)]="dataOutput.activo">
+    {{ dataOutput.activo ? 'Motivo activo' : 'Motivo inactivo' }}
+  </mat-slide-toggle>
+
+</div>
+
+<div class="footer-modal" mat-dialog-actions>
+  <button (click)="dataInput.accion === 'Crear' ? crearMotivo() : actualizarMotivo()" mat-raised-button color="primary">
+    {{ dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+</div>

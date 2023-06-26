@@ -1,9 +1,17 @@
-import { Component } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Usuario } from 'src/app/interface';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
+import { ModalCambioPasswordComponent } from 'src/app/shared/modals/modal-cambio-password/modal-cambio-password.component';
+import { ModalCambioPermisosComponent } from 'src/app/shared/modals/modal-cambio-permisos/modal-cambio-permisos.component';
+import { ModalUsuariosComponent } from 'src/app/shared/modals/modal-usuarios/modal-usuarios.component';
 
 @Component({
   selector: 'app-usuarios',
@@ -12,94 +20,140 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
 })
 export class UsuariosComponent {
 
-  // Permisos
-  public permiso_escritura: string[] = ['USUARIOS_ALL'];
+  public permisosTotales = ['CONFIG_GENERALES_ALL'];
+  public displayedColumns: string[] = ['opciones', 'apellido', 'usuario', 'rol', 'createdAt', 'activo'];
+  public dataSource = new MatTableDataSource<any>();
 
-  // Usuarios Listados
-  public usuarios: Usuario[] = [];
-  public total = 0;
+  public resultsLength = 0;
+  public isLoadingResults = true;
+  public isRateLimitReached = false;
+
+  // Usuarios
+  public usuarios: any = [];
 
   // Paginacion
-  public paginaActual: number = 1;
-  public cantidadItems: number = 10;
+  public totalItems: number = 0;
 
   // Filtrado
   public filtro = {
-    activo: 'true',
+    activo: '',
     parametro: ''
   }
 
   // Ordenar
   public ordenar = {
-    direccion: 'ASC',  // Asc (1) | Desc (-1)
+    direccion: 1,  // Asc (1) | Desc (-1)
     columna: 'apellido'
   }
 
-  // Para reportes
-  public totalReporte = 0;
-  public usuariosReporte = [];
-
   constructor(
-    public authService: AuthService,
+    public dialog: MatDialog,
     private usuariosService: UsuariosService,
     private alertService: AlertService,
-    private dataService: DataService
+    private dataService: DataService,
+    private _liveAnnouncer: LiveAnnouncer
   ) { }
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   ngOnInit(): void {
-    this.dataService.ubicacionActual = 'Dashboard - Usuarios'
+    this.dataService.ubicacionActual = 'Dashboard - Usuarios';
     this.alertService.loading();
     this.listarUsuarios();
+  }
+
+  public openModal(accion: string = 'Crear', elemento: any = {}): void {
+
+    let dataForm: any = {}
+
+    if (accion === 'Editar') {
+      dataForm = {
+        id: elemento.id,
+        apellido: elemento.apellido,
+        nombre: elemento.nombre,
+        usuario: elemento.usuario,
+        dni: elemento.dni,
+        email: elemento.email,
+        password: '',
+        repetir: '',
+        role: elemento.role,
+        activo: elemento.activo
+      }
+    } else {
+      dataForm = {
+        id: 0,
+        apellido: '',
+        nombre: '',
+        usuario: '',
+        dni: '',
+        email: '',
+        password: '',
+        repetir: '',
+        role: 'ADMIN_ROLE',
+        activo: true
+      }
+    }
+
+    const dialogRef = this.dialog.open(ModalUsuariosComponent, {
+      width: '500px',
+      data: {
+        accion,
+        dataForm
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(() => { this.listarUsuarios(); });
+
+  }
+
+  public openModalPassword(usuario: any): void {
+    this.dialog.open(ModalCambioPasswordComponent, {
+      width: '500px',
+      data: { usuario }
+    });
+  }
+
+  public openModalPermisos(usuario: any): void {
+    const dialogRef = this.dialog.open(ModalCambioPermisosComponent, {
+      width: '500px',
+      data: { usuario }
+    });
+    dialogRef.afterClosed().subscribe(() => { this.listarUsuarios(); });
+  }
+
+  filtradoTabla(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  ordenarTabla(sortState: any) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 
   // Listar usuarios
   listarUsuarios(): void {
-    this.usuariosService.listarUsuarios({
-      direccion: this.ordenar.direccion,
-      columna: this.ordenar.columna
-    }).subscribe({
-      next: ({ usuarios, total }) => {
+    this.usuariosService.listarUsuarios({}).subscribe({
+      next: ({ usuarios }) => {
         this.usuarios = usuarios;
-        this.total = total;
+        this.totalItems = usuarios.length;
+        this.resultsLength = usuarios.length;
+        this.dataSource.data = usuarios;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.isLoadingResults = false;
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
-    });
-  }
+    })
 
-  // Actualizar estado Activo/Inactivo
-  actualizarEstado(usuario: Usuario): void {
-    const { id, activo } = usuario;
-    this.alertService.question({ msg: '¿Quieres actualizar el estado?', buttonText: 'Actualizar' })
-      .then(({ isConfirmed }: any) => {
-        if (isConfirmed) {
-          this.alertService.loading();
-          this.usuariosService.actualizarUsuario(id, { activo: !activo }).subscribe({
-            next: () => {
-              this.listarUsuarios();
-            }, error: ({ error }) => this.alertService.errorApi(error.message)
-          })
-        }
-      });
-  }
-
-  // Filtrar Activo/Inactivo
-  filtrarActivos(activo: any): void {
-    this.paginaActual = 1;
-    this.filtro.activo = activo;
-  }
-
-  // Filtrar por Parametro
-  filtrarParametro(parametro: string): void {
-    this.paginaActual = 1;
-    this.filtro.parametro = parametro;
-  }
-
-  // Ordenar por columna
-  ordenarPorColumna(columna: string) {
-    this.ordenar.columna = columna;
-    this.ordenar.direccion = this.ordenar.direccion == 'ASC' ? 'DESC' : 'ASC';
-    this.alertService.loading();
-    this.listarUsuarios();
   }
 
 }

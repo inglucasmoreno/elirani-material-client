@@ -23,6 +23,24 @@ import { HomeComponent } from './home/home.component';
 import { OrdenesMatenimientoMaderaComponent } from './obras-madera/ordenes-matenimiento.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 
+import {MatButtonModule} from '@angular/material/button';
+import {NgIf} from '@angular/common';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTableModule} from '@angular/material/table';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSortModule} from '@angular/material/sort';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatListModule} from '@angular/material/list';
+
 @NgModule({
   declarations: [
     HomeComponent,
@@ -51,6 +69,23 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ComponentsModule,
     PipesModule,
     DirectivesModule,
+    MatButtonModule,
+    NgIf,
+    MatSidenavModule,
+    MatCardModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSortModule,
+    MatStepperModule,
+    MatTabsModule,
+    MatDividerModule,
+    MatListModule
   ],
   exports: [
   ]
