@@ -204,6 +204,17 @@ th.mat-sort-header-sorted {
 
 }
 
+// PLACAS
+
+.pastilla-placas {
+  padding: 4px;
+  border: 1px solid gray;
+  margin-right: 5px;
+  background-color: #673AB7;
+  color: white;
+  border-radius: 10%;
+}
+
 /* Estilos para pantallas medianas, como tablets */
 @media (min-width: 768px) and (max-width: 1023px) {}
 

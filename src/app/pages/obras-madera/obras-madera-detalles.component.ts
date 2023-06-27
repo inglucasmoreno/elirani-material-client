@@ -95,6 +95,7 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
       next: ({ obra }) => {
         this.obra = obra;
         this.muebles = obra.muebles;
+        console.log(this.muebles);
         this.generarDataSourceMuebles(this.muebles);
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)

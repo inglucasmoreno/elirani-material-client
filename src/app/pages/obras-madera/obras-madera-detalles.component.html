@@ -172,9 +172,9 @@
           <div (click)="openModalMueble('Editar', mueble)" style="border-left: 10px solid #673AB7"
             *ngFor="let mueble of muebles" class="container-muebles">
             <p><span style="font-weight: 500;"> Codigo de mueble: </span> <span> MA{{ mueble.id }} </span></p>
+            <p><span style="font-weight: 500;"> Tipos de mueble: </span> <span> {{ mueble.tipo_mueble.descripcion }} </span></p>
             <p><span style="font-weight: 500;"> Precio: </span> <span> ${{ mueble.precio | moneda }} </span></p>
-            <p><span style="font-weight: 500;"> Tipos de mueble: </span> <span> {{ mueble.tipo_mueble.descripcion }}
-              </span></p>
+            <p> <span class="pastilla-placas" *ngFor="let placa of mueble.muebles_placas"> {{ placa.tipo_placa_madera.codigo }} </span> </p>
           </div>
 
           <!-- <div>
