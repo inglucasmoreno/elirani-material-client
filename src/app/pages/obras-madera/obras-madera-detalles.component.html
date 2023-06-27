@@ -372,7 +372,9 @@
                   <mat-icon> west </mat-icon> </span>
                 <span> {{ pase.etapa_actual }} </span>
               </p>
-              <p> <span style="font-weight: 500;"> Realizado por: </span> <span> {{ pase.creatorUser.apellido }} {{
+              <p *ngIf="pase.tipo === 'Atras'"> <span style="font-weight: 500;"> Motivo: </span> <span> {{ pase.motivo.descripcion }} </span> </p>
+              <p style="margin-top: 20px;" *ngIf="pase.observacion && pase.observacion !== ''"> <span style="font-weight: 500;"> Observaciones: </span> <span> {{ pase.observacion }} </span> </p>
+              <p style="margin-top: 20px;"> <span style="font-weight: 500;"> Realizado por: </span> <span> {{ pase.creatorUser.apellido }} {{
                   pase.creatorUser.nombre }} </span> </p>
             </div>
           </div>

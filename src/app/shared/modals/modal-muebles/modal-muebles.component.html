@@ -54,7 +54,7 @@
     <div *ngIf="placas.length > 0">
       <p style="font-weight: 500;"> LISTADO DE PLACAS </p>
   
-      <div *ngFor="let placa of placas" class="container-placas">
+      <div (click)="eliminarPlaca(placa)" *ngFor="let placa of placas" class="container-placas">
         <div> <span style="font-weight: 500;"> Codigo de placa: </span> {{ placa.tipo_placa_madera_codigo }} </div>
         <div> <span style="font-weight: 500;"> Tipo: </span> {{ placa.tipo_placa_madera_descripcion }} </div>
         <div> <span style="font-weight: 500;"> Cantidad: </span> {{ placa.cantidad }} </div>
@@ -67,9 +67,13 @@
 
 </div>
 
-
 <div class="footer-modal" mat-dialog-actions>
-  <button (click)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" mat-raised-button color="primary"> {{
+
+  <button *ngIf="muebleConPlacas && showEtapa === 'Mueble'" color="primary" mat-raised-button (click)="cambiarEtapa('Placas')">
+    Continuar
+  </button>
+
+  <button *ngIf="!muebleConPlacas || showEtapa === 'Placas'" (click)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" mat-raised-button color="primary"> {{
     dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
   <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
 </div>

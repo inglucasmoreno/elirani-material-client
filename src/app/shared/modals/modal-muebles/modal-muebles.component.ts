@@ -68,7 +68,7 @@ export class ModalMueblesComponent {
   crearMueble(): void {
 
     const { tipo_mueble, precio } = this.dataOutput;
-   
+
     // DATOS DE MUEBLE
 
     // Verificacion: Tipo de mueble
@@ -84,7 +84,7 @@ export class ModalMueblesComponent {
     }
 
     // DATOS DE PLACAS
-    if(this.muebleConPlacas && this.placas.length === 0){
+    if (this.muebleConPlacas && this.placas.length === 0) {
       this.alertService.info('Debe agregar al menos una placa');
       return;
     }
@@ -109,7 +109,7 @@ export class ModalMueblesComponent {
         });
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
-    
+
   }
 
   // Eliminar mueble
@@ -134,7 +134,7 @@ export class ModalMueblesComponent {
   actualizarMueble(): void {
 
     const { tipo_mueble, precio } = this.dataOutput;
-   
+
     // Verificacion: Tipo de mueble
     if (!tipo_mueble || tipo_mueble === "") {
       this.alertService.info('Debes seleccionar un tipo de mueble');
@@ -170,7 +170,7 @@ export class ModalMueblesComponent {
 
   // Seleccionar tipo mueble
   seleccionarTipoMueble(): void {
-    const { placas } = this.tipos_muebles.find( tipo => tipo.id === this.dataOutput.tipo_mueble )
+    const { placas } = this.tipos_muebles.find(tipo => tipo.id === this.dataOutput.tipo_mueble)
     this.muebleConPlacas = placas;
     this.placas = [];
   }
@@ -200,7 +200,7 @@ export class ModalMueblesComponent {
       return;
     }
 
-    const placaSeleccionada = this.tipos_placas.find( tipo => tipo.id === this.dataPlacaTipo.id )
+    const placaSeleccionada = this.tipos_placas.find(tipo => tipo.id === this.dataPlacaTipo.id)
 
     this.placas.unshift({
       tipo_placa_madera: placaSeleccionada.id,
@@ -215,7 +215,30 @@ export class ModalMueblesComponent {
   }
 
   cambiarEtapa(etapa: string): void {
+
+    const { tipo_mueble, precio } = this.dataOutput;
+
+    if (etapa === 'Placas') {
+      // Verificacion: Tipo de mueble
+      if (!tipo_mueble || tipo_mueble === "") {
+        this.alertService.info('Debes seleccionar un tipo de mueble');
+        return;
+      }
+
+      // Verificacion: Precio
+      if (!precio || precio === 0) {
+        this.alertService.info('Debes colocar un precio');
+        return;
+      }
+    }
+
     this.showEtapa = etapa;
+
+  }
+
+  eliminarPlaca(placa: any): void {
+    this.placas = this.placas.filter( elemento => elemento.tipo_placa_madera !== placa.tipo_placa_madera );
+    console.log(placa);
   }
 
 

@@ -53,6 +53,11 @@
   margin-bottom: 10px;
 }
 
+.container-placas:hover {
+  border-color: red;
+  cursor: pointer;
+}
+
 .footer-modal {
   display: flex;
   flex-direction: row;
