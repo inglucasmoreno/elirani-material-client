@@ -22,13 +22,13 @@
   
     <mat-form-field floatLabel="always">
       <mat-label> <span style="color: red;"> * </span> Precio </mat-label>
-      <input (keyup.enter)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" [(ngModel)]="dataOutput.precio" matInput type="number" class="example-right-align" placeholder="0">
+      <input (keyup.enter)="this.accionFormulario()" [(ngModel)]="dataOutput.precio" matInput type="number" class="example-right-align" placeholder="0">
       <span matTextPrefix>$&nbsp;</span>
     </mat-form-field>
   
     <mat-form-field>
       <mat-label> Observaciones </mat-label>
-      <input [(ngModel)]="dataOutput.observaciones" (keyup.enter)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" matInput #input placeholder="Ej. Observaciones no obligatorias">
+      <input [(ngModel)]="dataOutput.observaciones" (keyup.enter)="this.accionFormulario()" matInput #input placeholder="Ej. Observaciones no obligatorias">
     </mat-form-field>
 
   </div>
@@ -55,8 +55,8 @@
       <p style="font-weight: 500;"> LISTADO DE PLACAS </p>
   
       <div (click)="eliminarPlaca(placa)" *ngFor="let placa of placas" class="container-placas">
-        <div> <span style="font-weight: 500;"> Codigo de placa: </span> {{ placa.tipo_placa_madera_codigo }} </div>
-        <div> <span style="font-weight: 500;"> Tipo: </span> {{ placa.tipo_placa_madera_descripcion }} </div>
+        <div> <span style="font-weight: 500;"> Codigo de placa: </span> {{ this.dataInput.accion === 'Crear' ? placa.tipo_placa_madera_codigo : placa.tipo_placa_madera.codigo }} </div>
+        <div> <span style="font-weight: 500;"> Tipo: </span> {{ this.dataInput.accion === 'Crear' ? placa.tipo_placa_madera_descripcion : placa.tipo_placa_madera.descripcion }} </div>
         <div> <span style="font-weight: 500;"> Cantidad: </span> {{ placa.cantidad }} </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
     Continuar
   </button>
 
-  <button *ngIf="!muebleConPlacas || showEtapa === 'Placas'" (click)="dataInput.accion === 'Crear' ? crearMueble() : actualizarMueble()" mat-raised-button color="primary"> {{
+  <button *ngIf="!muebleConPlacas || showEtapa === 'Placas'" (click)="this.accionFormulario()" mat-raised-button color="primary"> {{
     dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
   <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
 </div>

@@ -5,6 +5,7 @@ import { TiposMueblesService } from 'src/app/services/tipos-muebles.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TiposPlacasMaderaService } from '../../../services/tipos-placas-madera.service';
+import { MueblesPlacasService } from '../../../services/muebles-placas.service';
 
 @Component({
   selector: 'app-modal-muebles',
@@ -27,6 +28,7 @@ export class ModalMueblesComponent {
     tipo_mueble: null,
     precio: null,
     observaciones: '',
+    placas: [],
   }
 
   public dataPlacaTipo = {
@@ -39,6 +41,7 @@ export class ModalMueblesComponent {
     private mueblesService: MueblesService,
     private tiposPlacasMaderaService: TiposPlacasMaderaService,
     private tiposMueblesService: TiposMueblesService,
+    private mueblesPlacasService: MueblesPlacasService,
     private alertService: AlertService,
     public dialogRef: MatDialogRef<ModalMueblesComponent>,
     @Inject(MAT_DIALOG_DATA) public dataInput: any,
@@ -46,6 +49,8 @@ export class ModalMueblesComponent {
 
   ngOnInit(): void {
     this.dataOutput = this.dataInput.dataForm;
+    this.muebleConPlacas = this.dataInput.dataForm.muebleConPlacas;
+    this.placas = this.dataInput.dataForm.placas;
     this.inicializacion();
   }
 
@@ -172,7 +177,7 @@ export class ModalMueblesComponent {
   seleccionarTipoMueble(): void {
     const { placas } = this.tipos_muebles.find(tipo => tipo.id === this.dataOutput.tipo_mueble)
     this.muebleConPlacas = placas;
-    this.placas = [];
+    if (this.dataInput.accion === 'Crear') this.placas = [];
   }
 
   // Agregar placa
@@ -192,7 +197,7 @@ export class ModalMueblesComponent {
 
     // Tipo de placa repetido
     this.placas.map(placa => {
-      if (placa.tipo_placa_madera === this.dataPlacaTipo.id) tipoRepetido = true;
+      if (placa.tipo_placa_madera.id === this.dataPlacaTipo.id) tipoRepetido = true;
     })
 
     if (tipoRepetido) {
@@ -200,17 +205,52 @@ export class ModalMueblesComponent {
       return;
     }
 
-    const placaSeleccionada = this.tipos_placas.find(tipo => tipo.id === this.dataPlacaTipo.id)
+    if (this.dataInput.accion === 'Crear') {
 
-    this.placas.unshift({
-      tipo_placa_madera: placaSeleccionada.id,
-      tipo_placa_madera_codigo: placaSeleccionada.codigo,
-      tipo_placa_madera_descripcion: placaSeleccionada.descripcion,
-      cantidad: this.dataPlacaTipo.cantidad
-    });
+      const placaSeleccionada = this.tipos_placas.find(tipo => tipo.id === this.dataPlacaTipo.id)
 
-    this.dataPlacaTipo.id = null;
-    this.dataPlacaTipo.cantidad = null;
+      this.placas.unshift({
+        tipo_placa_madera: placaSeleccionada.id,
+        tipo_placa_madera_codigo: placaSeleccionada.codigo,
+        tipo_placa_madera_descripcion: placaSeleccionada.descripcion,
+        cantidad: this.dataPlacaTipo.cantidad
+      });
+
+      this.dataPlacaTipo.id = null;
+      this.dataPlacaTipo.cantidad = null;
+
+    } else {
+
+      this.alertService.question({ msg: `Agregando placa`, buttonText: 'Agregar' })
+        .then(({ isConfirmed }: any) => {
+          if (isConfirmed) {
+            
+            this.alertService.loading();
+            
+            const data = {
+              mueble: this.dataOutput.id,
+              tipo_placa_madera: this.dataPlacaTipo.id,
+              cantidad: this.dataPlacaTipo.cantidad,
+              creatorUser: this.authService.usuario.userId,
+              updatorUser: this.authService.usuario.userId
+            }; 
+            
+            this.mueblesPlacasService.nuevaRelacion(data).subscribe({
+              next: ({ relacion }) => {
+                
+                this.placas.unshift(relacion);
+              
+                this.dataPlacaTipo.id = null;
+                this.dataPlacaTipo.cantidad = null;
+
+                this.alertService.close();
+              
+              }, error: ({ error }) => this.alertService.errorApi(error.message)
+            })
+          }
+        });
+
+    }
 
   }
 
@@ -237,8 +277,36 @@ export class ModalMueblesComponent {
   }
 
   eliminarPlaca(placa: any): void {
-    this.placas = this.placas.filter( elemento => elemento.tipo_placa_madera !== placa.tipo_placa_madera );
-    console.log(placa);
+
+    if (this.dataInput.accion === 'Crear') {
+      this.placas = this.placas.filter(elemento => elemento.tipo_placa_madera !== placa.tipo_placa_madera);
+    } else {
+      this.alertService.question({ msg: `Eliminando placa`, buttonText: 'Eliminar' })
+        .then(({ isConfirmed }: any) => {
+          if (isConfirmed) {
+            this.alertService.loading();
+            this.mueblesPlacasService.eliminarRelacion(placa.id).subscribe({
+              next: () => {
+                this.placas = this.placas.filter(elemento => elemento.id !== placa.id);
+                this.alertService.close();
+              }, error: ({ error }) => this.alertService.errorApi(error.message)
+            })
+          }
+        });
+    }
+  }
+
+  // Accion - Formulario
+  accionFormulario(): void {
+
+    if(this.dataInput.accion === 'Crear' && !this.muebleConPlacas){
+      this.crearMueble();
+    }else if(this.dataInput.accion === 'Crear' && this.muebleConPlacas){
+      this.cambiarEtapa('Placas');
+    }else if(this.dataInput.accion === 'Editar') {
+      this.actualizarMueble();
+    }
+    
   }
 
 

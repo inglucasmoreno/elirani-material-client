@@ -168,7 +168,6 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
   public openModalMueble(accion: string = 'Crear', elemento: any = {}): void {
 
     let dataForm: any = {}
-    let placas: boolean = false;
 
     if (accion === 'Editar') {
       dataForm = {
@@ -177,15 +176,18 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
         tipo_mueble: elemento.tipo_mueble.id,
         precio: elemento.precio,
         observaciones: elemento.observaciones,
+        muebleConPlacas: elemento.tipo_mueble.placas,
+        placas: elemento.muebles_placas
       }
-      placas = true;
     } else {
       dataForm = {
         id: 0,
         obra_madera: this.idObra,
         tipo_mueble: null,
         precio: null,
-        observaciones: ''
+        observaciones: '',
+        muebleConPlacas: false,
+        placas: [],
       }
     }
 
@@ -194,15 +196,17 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
       data: {
         accion,
         dataForm,
-        placas
       }
     });
 
     dialogRef.afterClosed().subscribe(({ accion, mueble, idMueble }) => {
+      
+      // CREAR MUEBLE
       if (mueble && accion === 'Crear') {
         this.muebles.unshift(mueble);
-        this.generarDataSourceMuebles(this.muebles);
         this.actualizarPrecio();
+      
+      // ACTUALIZAR MUEBLE
       } else if (mueble && accion === 'Editar') {
         this.muebles.find((elemento: any) => {
           if (elemento.id === mueble.id) {
@@ -212,9 +216,11 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
           }
         })
         this.actualizarPrecio();
-        this.generarDataSourceMuebles(this.muebles);
+
+      // ELIMINAR MUEBLE
       } else if (idMueble && accion === 'Eliminar') {
-        this.muebles = this.muebles.filter( (elemento: any) => elemento.id !== idMueble );
+        this.muebles = this.muebles.filter((elemento: any) => elemento.id !== idMueble);
+        this.actualizarPrecio();
       }
       this.alertService.close();
     });

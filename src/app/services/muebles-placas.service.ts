@@ -20,6 +20,7 @@ export class MueblesPlacasService {
 
   // Nueva relacion
   nuevaRelacion(data: any): Observable<any> {
+    console.log(data);
     return this.http.post(`${base_url}/muebles-placas`, data, {
       headers: this.getToken
     });
