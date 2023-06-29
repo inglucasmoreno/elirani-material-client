@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
 
 // Angular Material
 import { ErrorPageComponent } from './error-page/error-page.component';
@@ -28,6 +29,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    MatButtonModule,
 
     // Propios
     AuthModule,
