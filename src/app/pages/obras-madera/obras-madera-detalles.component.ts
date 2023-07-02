@@ -1,10 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatTabGroup } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { add, format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
@@ -24,7 +20,7 @@ import { ModalOrdenesMantenimientoComponent } from 'src/app/shared/modals/modal-
   templateUrl: './obras-madera-detalles.component.html',
   styleUrls: ['./obras-madera-detalles.component.scss']
 })
-export class ObrasMaderaDetallesComponent implements AfterViewInit {
+export class ObrasMaderaDetallesComponent {
 
   // Permisos totales
   public permisosTotales = ['OBRAS_MADERA_ALL'];
@@ -35,10 +31,7 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
 
   // Muebles
   public muebles: any = [];
-  public dataSourceMuebles = new MatTableDataSource<any>();
   public resultsLengthMuebles = 0;
-  public isLoadingResultsMuebles = true;
-  public isRateLimitReachedMuebles = false;
   public displayedColumnsMuebles: string[] = ['opciones', 'id', 'precio', 'tipo_mueble', 'createdAt'];
 
   // Pases
@@ -58,9 +51,7 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
     columna: 'fecha'
   }
 
-  @ViewChild(MatTabGroup) tabGroup: any;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+
 
   constructor(
     private router: Router,
@@ -73,12 +64,7 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
     private dataService: DataService,
     private activatedRoute: ActivatedRoute,
     public dialog: MatDialog,
-    private _liveAnnouncer: LiveAnnouncer
   ) { }
-
-  ngAfterViewInit() {
-    this.tabGroup.disablePagination = true;
-  }
 
   ngOnInit(): void {
     this.alertService.loading();
@@ -95,8 +81,6 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
       next: ({ obra }) => {
         this.obra = obra;
         this.muebles = obra.muebles;
-        console.log(this.muebles);
-        this.generarDataSourceMuebles(this.muebles);
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
@@ -333,7 +317,6 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
             next: () => {
               this.muebles = this.muebles.filter((elemento: any) => elemento.id !== mueble.id);
               this.actualizarPrecio();
-              this.generarDataSourceMuebles(this.muebles);
               this.alertService.close();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
@@ -393,7 +376,6 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
     this.ordenesMantenimientoMaderaService.listarOrdenes(parametros).subscribe({
       next: ({ ordenes }) => {
         this.ordenesMantenimiento = ordenes;
-        console.log(ordenes);
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
@@ -411,7 +393,6 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
 
     this.obrasMaderaPasesService.listarPases(parametros).subscribe({
       next: ({ pases }) => {
-        console.log(pases);
         this.pases = pases;
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -429,34 +410,6 @@ export class ObrasMaderaDetallesComponent implements AfterViewInit {
   ordenarOrdenesMantenimientoFnc(direccion: number): void {
     this.ordenarOrdenesMantenimiento.direccion = direccion;
     this.listarOrdenesMantenimiento();
-  }
-
-  // TABLA - MUEBLES
-
-  filtradoTablaMuebles(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceMuebles.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSourceMuebles.paginator) {
-      this.dataSourceMuebles.paginator.firstPage();
-    }
-  }
-
-  ordenarTablaMuebles(sortState: any) {
-    if (sortState.direction) {
-      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
-    } else {
-      this._liveAnnouncer.announce('Sorting cleared');
-    }
-  }
-
-  generarDataSourceMuebles(elementos: any): void {
-    this.dataSourceMuebles = new MatTableDataSource<any>(elementos);
-    this.resultsLengthMuebles = this.muebles.length;
-    this.dataSourceMuebles.data = elementos;
-    this.dataSourceMuebles.paginator = this.paginator;
-    this.dataSourceMuebles.sort = this.sort;
-    this.isLoadingResultsMuebles = false;
   }
 
 }

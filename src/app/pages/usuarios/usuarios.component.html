@@ -7,7 +7,7 @@
                 <mat-card-title> LISTADO DE USUARIOS </mat-card-title>
                 <mat-card-subtitle> Total de elementos: {{ totalItems }} </mat-card-subtitle>
             </div>
-            <button mat-icon-button [matMenuTriggerFor]="menu_usuario" aria-label="Example icon-button with a menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu_usuario">
                 <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu_usuario="matMenu">
@@ -21,10 +21,21 @@
         <!-- Contenido de tarjeta -->
         <mat-card-content class="container-tabla">
 
-            <mat-form-field>
-                <mat-label>Buscar</mat-label>
-                <input matInput (keyup)="filtradoTabla($event)" placeholder="Ej. admin" #input>
-            </mat-form-field>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <mat-form-field style="width: 400px;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput [(ngModel)]="filtro.parametro" (keyup)="filtradoTabla()" placeholder="Ej. Equinoccio Technology" #input>
+                </mat-form-field>
+                
+                <mat-form-field style="width: 400px; margin-left: 10px;">
+                    <mat-label> Estado </mat-label>
+                    <mat-select (selectionChange)="filtradoTabla()" [(ngModel)]="filtro.activo">
+                      <mat-option value="">Todos</mat-option>
+                      <mat-option value="Alta">Activo</mat-option>
+                      <mat-option value="Baja">Inactivo</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
             <div class="material-container mat-elevation-z8">
 
@@ -67,36 +78,31 @@
 
                         <!-- Columna - Apellido -->
                         <ng-container matColumnDef="apellido">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por apellido"> Apellido y Nombre </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido y Nombre </th>
                             <td mat-cell *matCellDef="let row">{{row.apellido + ' ' + row.nombre}}</td>
                         </ng-container>
 
                         <!-- Columna - Usuario -->
                         <ng-container matColumnDef="usuario">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por usuario"> Usuario </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
                             <td mat-cell *matCellDef="let row">{{row.usuario}}</td>
                         </ng-container>
 
                         <!-- Columna - Rol -->
                         <ng-container matColumnDef="rol">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por rol"> Rol </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Rol </th>
                             <td mat-cell *matCellDef="let row">{{row.role | rol}}</td>
                         </ng-container>
 
                         <!-- Columna - Fecha de creacion -->
                         <ng-container matColumnDef="createdAt">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por fecha">Fecha de creación</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de creación</th>
                             <td mat-cell *matCellDef="let row">{{row.createdAt | fecha}}</td>
                         </ng-container>
 
                         <!-- Columna - Estado -->
                         <ng-container matColumnDef="activo">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por estado"> Estado </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
                             <td mat-cell *matCellDef="let row">{{row.activo ? 'Activo' : 'Inactivo' }}</td>
                         </ng-container>
 

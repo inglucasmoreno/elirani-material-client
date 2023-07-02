@@ -40,6 +40,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import {MatListModule} from '@angular/material/list';
     MatStepperModule,
     MatTabsModule,
     MatDividerModule,
-    MatListModule
+    MatListModule,
+    MatSelectModule
   ],
   exports: [
   ]

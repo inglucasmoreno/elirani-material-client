@@ -27,7 +27,7 @@ export class OrdenesMatenimientoMaderaComponent {
   public isRateLimitReached = false;
 
   // Ordenes de mantenimiento
-  public ordenes: any = [];
+  public ordenes: any = [{}];
 
   // Paginacion
   public totalItems: number = 0;
@@ -99,12 +99,19 @@ export class OrdenesMatenimientoMaderaComponent {
   }
 
   filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    const parametro = (event.target as HTMLInputElement).value.toLowerCase();
+
+    this.dataSource.data = this.ordenes.filter(
+      (elemento: any) =>
+        elemento.id === Number(parametro) ||
+        elemento.obra_madera.cliente.descripcion.toLowerCase().includes(parametro)
+    );
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
   }
 
   ordenarTabla(sortState: any) {

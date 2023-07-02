@@ -89,9 +89,27 @@ export class ObrasMaderaMotivosPasesComponent {
 
   }
 
-  filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filtradoTabla() {
+
+
+    const { parametro, activo } = this.filtro;
+
+    let valores = [];
+
+    // Filtrado por estado
+    if (activo !== '') {
+      valores = this.motivos.filter(
+        (elemento: any) => (elemento.activo ? 'Alta' : 'Baja').includes(activo)
+      )
+    } else valores = this.motivos;
+
+
+    valores = valores.filter(
+      (elemento: any) =>
+        elemento.descripcion.toLowerCase().includes(parametro)
+    );
+
+    this.dataSource.data = valores;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -112,7 +130,6 @@ export class ObrasMaderaMotivosPasesComponent {
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
-      activo: this.filtro.activo,
       parametro: this.filtro.parametro,
     }
 
@@ -125,6 +142,7 @@ export class ObrasMaderaMotivosPasesComponent {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
+        this.filtradoTabla();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })

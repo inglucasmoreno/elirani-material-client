@@ -5,7 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from 'src/app/services/alert.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { DataService } from 'src/app/services/data.service';
 import { ModalClientesComponent } from 'src/app/shared/modals/modal-clientes/modal-clientes.component';
@@ -26,7 +25,7 @@ export class ClientesComponent implements OnInit {
   public isRateLimitReached = false;
 
   // Clientes
-  public clientes: any = [];
+  public clientes: any = [{}];
 
   // Paginacion
   public totalItems: number = 0;
@@ -98,13 +97,34 @@ export class ClientesComponent implements OnInit {
 
   }
 
-  filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filtradoTabla() {
+
+    const { parametro, activo } = this.filtro;
+
+    let valores = [];
+
+    // Filtrado por estado
+    if(activo !== ''){
+      valores = this.clientes.filter(
+        (elemento: any) => (elemento.activo ? 'Alta' : 'Baja').includes(activo) 
+      )       
+    }else valores = this.clientes;
+    
+    // Filtrado por parametro
+    valores = valores.filter(
+      (elemento: any) =>
+        elemento.descripcion.toLowerCase().includes(parametro) ||
+        elemento.tipo_identificacion.toLowerCase().includes(parametro) ||
+        elemento.identificacion.toLowerCase().includes(parametro) ||
+        elemento.identificacion.toLowerCase().includes(parametro) 
+    );
+
+    this.dataSource.data = valores;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    
   }
 
   ordenarTabla(sortState: any) {
@@ -121,7 +141,6 @@ export class ClientesComponent implements OnInit {
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
-      activo: this.filtro.activo,
       parametro: this.filtro.parametro,
     }
 
@@ -134,6 +153,7 @@ export class ClientesComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
+        this.filtradoTabla();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })

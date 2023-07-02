@@ -72,25 +72,11 @@ export class ModalMueblesComponent {
   // Nuevo mueble
   crearMueble(): void {
 
-    const { tipo_mueble, precio } = this.dataOutput;
-
-    // DATOS DE MUEBLE
-
-    // Verificacion: Tipo de mueble
-    if (!tipo_mueble || tipo_mueble === "") {
-      this.alertService.info('Debes seleccionar un tipo de mueble');
-      return;
-    }
-
-    // Verificacion: Precio
-    if (!precio || precio === 0) {
-      this.alertService.info('Debes colocar un precio');
-      return;
-    }
-
-    // DATOS DE PLACAS
-    if (this.muebleConPlacas && this.placas.length === 0) {
-      this.alertService.info('Debe agregar al menos una placa');
+    // Verificacion
+    const { correcto, message } = this.verificacionDatos();
+    
+    if(!correcto) {
+      this.alertService.info(message);
       return;
     }
 
@@ -138,23 +124,18 @@ export class ModalMueblesComponent {
   // Actualizar mueble
   actualizarMueble(): void {
 
-    const { tipo_mueble, precio } = this.dataOutput;
-
-    // Verificacion: Tipo de mueble
-    if (!tipo_mueble || tipo_mueble === "") {
-      this.alertService.info('Debes seleccionar un tipo de mueble');
-      return;
-    }
-
-    // Verificacion: Precio
-    if (!precio || precio === 0) {
-      this.alertService.info('Debes colocar un precio');
+    // Verificacion
+    const { correcto, message } = this.verificacionDatos();
+    
+    if(!correcto) {
+      this.alertService.info(message);
       return;
     }
 
     const data = {
       tipo_mueble: this.dataOutput.tipo_mueble,
       obra_madera: this.dataOutput.obra_madera,
+      muebleConPlacas: this.muebleConPlacas,
       precio: this.dataOutput.precio,
       observaciones: this.dataOutput.observaciones,
       updatorUser: this.authService.usuario.userId,
@@ -237,7 +218,7 @@ export class ModalMueblesComponent {
             
             this.mueblesPlacasService.nuevaRelacion(data).subscribe({
               next: ({ relacion }) => {
-                
+
                 this.placas.unshift(relacion);
               
                 this.dataPlacaTipo.id = null;
@@ -278,6 +259,11 @@ export class ModalMueblesComponent {
 
   eliminarPlaca(placa: any): void {
 
+    if(this.placas.length === 1){
+      this.alertService.info('El mueble no puede quedar sin placas');
+      return;
+    }
+
     if (this.dataInput.accion === 'Crear') {
       this.placas = this.placas.filter(elemento => elemento.tipo_placa_madera !== placa.tipo_placa_madera);
     } else {
@@ -287,8 +273,13 @@ export class ModalMueblesComponent {
             this.alertService.loading();
             this.mueblesPlacasService.eliminarRelacion(placa.id).subscribe({
               next: () => {
-                this.placas = this.placas.filter(elemento => elemento.id !== placa.id);
+                
+                // this.placas = this.placas.filter(elemento => elemento.id !== placa.id);
+
+                const indice = this.placas.findIndex(elemento => elemento.id === placa.id);
+                this.placas.splice(indice, 1);
                 this.alertService.close();
+
               }, error: ({ error }) => this.alertService.errorApi(error.message)
             })
           }
@@ -301,12 +292,40 @@ export class ModalMueblesComponent {
 
     if(this.dataInput.accion === 'Crear' && !this.muebleConPlacas){
       this.crearMueble();
-    }else if(this.dataInput.accion === 'Crear' && this.muebleConPlacas){
+    }else if(this.dataInput.accion === 'Crear' && this.muebleConPlacas && this.showEtapa === 'Mueble'){
       this.cambiarEtapa('Placas');
+    }else if(this.dataInput.accion === 'Crear' && this.muebleConPlacas && this.showEtapa === 'Placas'){
+      this.crearMueble();
     }else if(this.dataInput.accion === 'Editar') {
       this.actualizarMueble();
     }
     
+  }
+
+  // Verificacion
+  verificacionDatos(): { correcto: boolean, message: string } {
+    
+    const { tipo_mueble, precio } = this.dataOutput;
+
+    // Verificacion: Tipo de mueble
+    if (!tipo_mueble || tipo_mueble === "") {
+      this.alertService.info('Debes seleccionar un tipo de mueble');
+      return { correcto: false, message: 'Debes seleccionar un tipo de mueble' };
+    }
+
+    // Verificacion: Precio
+    if (!precio || precio === 0) {
+      return { correcto: false, message: 'Debes colocar un precio' };
+    }
+
+    // DATOS DE PLACAS
+    if (this.muebleConPlacas && this.placas.length === 0) {
+      this.alertService.info('Debe agregar al menos una placa');
+      return { correcto: false, message: 'Debe agregar al menos una placa' };
+    }
+
+    return { correcto: true, message: 'Todo correcto' };
+
   }
 
 

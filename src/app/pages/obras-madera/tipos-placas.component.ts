@@ -63,14 +63,14 @@ export class TiposPlacasComponent {
 
     let dataForm: any = {}
 
-    if(accion === 'Editar'){      
+    if (accion === 'Editar') {
       dataForm = {
         id: elemento.id,
         codigo: elemento.codigo,
         descripcion: elemento.descripcion,
         activo: elemento.activo,
       }
-    }else{
+    } else {
       dataForm = {
         id: 0,
         codigo: '',
@@ -91,9 +91,26 @@ export class TiposPlacasComponent {
 
   }
 
-  filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filtradoTabla() {
+
+    const { parametro, activo } = this.filtro;
+
+    let valores = [];
+
+    // Filtrado por estado
+    if (activo !== '') {
+      valores = this.tipos.filter(
+        (elemento: any) => (elemento.activo ? 'Alta' : 'Baja').includes(activo)
+      )
+    } else valores = this.tipos;
+
+    valores = valores.filter(
+      (elemento: any) =>
+        elemento.codigo.toLowerCase().includes(parametro) ||
+        elemento.descripcion.toLowerCase().includes(parametro)
+    );
+
+    this.dataSource.data = valores;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -114,7 +131,6 @@ export class TiposPlacasComponent {
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
-      activo: this.filtro.activo,
       parametro: this.filtro.parametro,
     }
 
@@ -127,6 +143,7 @@ export class TiposPlacasComponent {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
+        this.filtradoTabla();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })

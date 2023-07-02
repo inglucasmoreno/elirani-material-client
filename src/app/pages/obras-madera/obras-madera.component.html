@@ -7,7 +7,7 @@
         <mat-card-title> LISTADO DE OBRAS - MADERA </mat-card-title>
         <mat-card-subtitle> Total de elementos: {{ totalItems }} </mat-card-subtitle>
       </div>
-      <button mat-icon-button [matMenuTriggerFor]="menu_usuario" aria-label="Example icon-button with a menu">
+      <button mat-icon-button [matMenuTriggerFor]="menu_usuario">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu_usuario="matMenu">
@@ -26,10 +26,23 @@
     <!-- Contenido de tarjeta -->
     <mat-card-content *ngIf="obras.length > 0" class="container-tabla">
 
-      <mat-form-field>
-        <mat-label>Buscar</mat-label>
-        <input matInput (keyup)="filtradoTabla($event)" placeholder="Ej. MA1" #input>
-      </mat-form-field>
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <mat-form-field style="width: 400px;">
+            <mat-label>Buscar</mat-label>
+            <input matInput [(ngModel)]="filtro.parametro" (keyup)="filtradoTabla()" placeholder="Ej. Equinoccio Technology" #input>
+        </mat-form-field>
+        
+        <mat-form-field style="width: 400px; margin-left: 10px;">
+            <mat-label> Estado </mat-label>
+            <mat-select (selectionChange)="filtradoTabla()" [(ngModel)]="filtro.estado">
+              <mat-option value="">Todos</mat-option>
+              <mat-option value="Pendiente">Pendiente</mat-option>
+              <mat-option value="Produccion">Produccion</mat-option>
+              <mat-option value="Colocacion">Colocacion</mat-option>
+              <mat-option value="Finalizada">Finalizada</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
 
       <div class="material-container mat-elevation-z8">
 
@@ -49,7 +62,7 @@
             <ng-container matColumnDef="opciones">
               <th mat-header-cell *matHeaderCellDef> Opciones </th>
               <td mat-cell *matCellDef="let row">
-                <button mat-icon-button [matMenuTriggerFor]="menu_fila" aria-label="Example icon-button with a menu">
+                <button mat-icon-button [matMenuTriggerFor]="menu_fila">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu_fila="matMenu">
@@ -67,35 +80,35 @@
 
             <!-- Columna - Codigo -->
             <ng-container matColumnDef="codigo">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por codigo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 Codigo </th>
               <td mat-cell *matCellDef="let row">{{row.codigo | codigoMadera}}</td>
             </ng-container>
 
             <!-- Columna - Placas -->
             <ng-container matColumnDef="cliente.descripcion">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por clientes"> Cliente
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente
               </th>
               <td mat-cell *matCellDef="let row">{{row.cliente.descripcion}}</td>
             </ng-container>
 
             <!-- Columna - Fecha de inicio -->
             <ng-container matColumnDef="fecha_inicio">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por fecha de inicio">Inicio
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Inicio
               </th>
               <td mat-cell *matCellDef="let row">{{row.fecha_inicio | fecha}}</td>
             </ng-container>
 
             <!-- Columna - Fecha de colocacion -->
             <ng-container matColumnDef="fecha_finalizacion_estimada">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por fecha de colocacion">Colocación (Estimada)
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Colocación (Estimada)
               </th>
               <td mat-cell *matCellDef="let row">{{row.fecha_finalizacion_estimada | fecha}}</td>
             </ng-container>
 
             <!-- Columna - Estado -->
             <ng-container matColumnDef="estado">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por estado"> Estado
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado
               </th>
               <td mat-cell *matCellDef="let row">{{row.estado }}</td>
             </ng-container>

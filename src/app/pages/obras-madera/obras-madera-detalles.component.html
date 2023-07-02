@@ -171,96 +171,18 @@
 
           <div (click)="openModalMueble('Editar', mueble)" style="border-left: 10px solid #673AB7"
             *ngFor="let mueble of muebles" class="container-muebles">
-            <p><span style="font-weight: 500;"> Codigo de mueble: </span> <span> MA{{ mueble.id }} </span></p>
-            <p><span style="font-weight: 500;"> Tipos de mueble: </span> <span> {{ mueble.tipo_mueble.descripcion }}
-              </span></p>
-            <p><span style="font-weight: 500;"> Precio: </span> <span> ${{ mueble.precio | moneda }} </span></p>
-            <p> <span class="pastilla-placas" *ngFor="let placa of mueble.muebles_placas"> {{
-                placa.tipo_placa_madera.codigo }} </span> </p>
-          </div>
-
-          <!-- <div>
-
-            <div *ngIf="muebles.length !== 0">
-
-              <mat-form-field style="width: 100%;">
-                <mat-label>Buscar</mat-label>
-                <input matInput (keyup)="filtradoTablaMuebles($event)" placeholder="Ej. Cocina" #input>
-              </mat-form-field>
-
-              <div class="material-container">
-
-                <div class="material-loading-shade" *ngIf="isLoadingResultsMuebles || isRateLimitReachedMuebles">
-                  <mat-spinner *ngIf="isLoadingResultsMuebles"></mat-spinner>
-                  <div class="material-rate-limit-reached" *ngIf="isRateLimitReachedMuebles">
-                    GitHub's API rate limit has been reached. It will be reset in one minute.
-                  </div>
-                </div>
-
-                <div class="material-table-container">
-
-                  <table mat-table [dataSource]="dataSourceMuebles" class="example-table"
-                    (matSortChange)="ordenarTablaMuebles($event)" matSort>
-
-                    <ng-container matColumnDef="opciones">
-                      <th mat-header-cell *matHeaderCellDef> Opciones </th>
-                      <td mat-cell *matCellDef="let row">
-                        <button mat-icon-button [matMenuTriggerFor]="menu_fila">
-                          <mat-icon>more_vert</mat-icon>
-                        </button>
-                        <mat-menu #menu_fila="matMenu">
-                          <button (click)="openModalMueble('Editar', row)" mat-menu-item>
-                            <mat-icon> edit </mat-icon>
-                            <span> Editar </span>
-                          </button>
-                          <button (click)="eliminarMueble(row)" mat-menu-item>
-                            <mat-icon> delete </mat-icon>
-                            <span> Eliminar </span>
-                          </button>
-                        </mat-menu>
-                      </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="id">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por codigo">
-                        Código</th>
-                      <td mat-cell *matCellDef="let row">M{{ row.id }}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="precio">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por precio">
-                        Precio</th>
-                      <td mat-cell *matCellDef="let row">${{ row.precio | moneda }}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="tipo_mueble">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por tipo">
-                        Tipo de mueble</th>
-                      <td mat-cell *matCellDef="let row">{{ row.tipo_mueble.descripcion}}</td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="createdAt">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por fecha">
-                        Fecha de creación</th>
-                      <td mat-cell *matCellDef="let row">{{row.createdAt | fecha}}</td>
-                    </ng-container>
-
-                    <tr mat-header-row *matHeaderRowDef="displayedColumnsMuebles"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumnsMuebles;"></tr>
-
-                    <tr class="filter-texto" *matNoDataRow>
-                      <td>No se encontraron resultados que contenga <b> "{{input.value}}" </b> </td>
-                    </tr>
-
-                  </table>
-                </div>
-
-                <mat-paginator [pageSizeOptions]="[10,20,50,100]" showFirstLastButtons></mat-paginator>
-              </div>
-
+            <div>
+              <img style="width: 100px" src="assets/img/mueble.svg" alt="Mueble">
             </div>
-
-          </div> -->
+            <div style="margin-left: 15px;">
+              <p><span style="font-weight: 500;"> Codigo de mueble: </span> <span> MA{{ mueble.id }} </span></p>
+              <p><span style="font-weight: 500;"> Tipos de mueble: </span> <span> {{ mueble.tipo_mueble.descripcion }}
+                </span></p>
+              <p><span style="font-weight: 500;"> Precio: </span> <span> ${{ mueble.precio | moneda }} </span></p>
+              <p> <span class="pastilla-placas" *ngFor="let placa of mueble.muebles_placas"> {{
+                  placa.tipo_placa_madera.codigo }} </span> </p>
+            </div>
+          </div>
 
         </div>
       </mat-tab>
@@ -321,12 +243,21 @@
             <div [ngClass]="{'container-ordenes-alert': orden.observaciones === '' || !orden.precio}"
               (click)="openModalOrdenMantenimiento('Editar', orden)" style="border-left: 10px solid #673AB7"
               class="container-ordenes" *ngFor="let orden of ordenesMantenimiento">
-              <p> <span style="font-weight: 500;"> Fecha: </span> <span> {{ orden.fecha | fecha }} </span> </p>
-              <p> <span style="font-weight: 500;"> Nro de orden: </span> <span> {{ orden.id }} </span> </p>
-              <p> <span style="font-weight: 500;"> Precio: </span> <span> {{ orden.precio ? '$' + (orden.precio |
-                  moneda) : 'Sin especificar' }} </span> </p>
-              <p> <span style="font-weight: 500;"> Observaciones: </span> <span> {{ orden.observaciones === '' ? 'Sin
-                  especificar' : orden.observaciones }} </span> </p>
+              <img style="width: 100px;" src="assets/img/orden-mantenimiento.svg" alt="orden-mantenimiento">
+              <div style="margin-left: 10px;">
+                <p> <span style="font-weight: 500;"> Fecha: </span> <span> {{ orden.fecha | fecha }} </span> </p>
+                <p> <span style="font-weight: 500;"> Nro de orden: </span> <span> {{ orden.id }} </span> </p>
+                <p> <span style="font-weight: 500;"> Precio: </span> <span> {{ orden.precio ? '$' + (orden.precio |
+                    moneda) : 'Sin especificar' }} </span> </p>
+                <p> 
+                  <span style="font-weight: 500;"> 
+                    Observaciones: 
+                  </span> 
+                  <span> 
+                    {{ orden.observaciones === '' ? 'Sin especificar' : orden.observaciones }} 
+                  </span> 
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -365,22 +296,27 @@
           <div *ngIf="pases.length > 0">
             <div [ngClass]="{'paseAdelante':pase.tipo === 'Adelante', 'paseAtras':pase.tipo === 'Atras'}"
               *ngFor="let pase of pases" class="container-pases">
-              <p> <span style="font-weight: 500;"> Fecha: </span> <span> {{ pase.createdAt | fecha }} </span> </p>
-              <p style="display: flex; align-items: center;">
-                <span> {{ pase.etapa_anterior }} </span>
-                <span *ngIf="pase.tipo === 'Adelante'" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
-                  <mat-icon> east </mat-icon> </span>
-                <span *ngIf="pase.tipo === 'Atras'" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
-                  <mat-icon> west </mat-icon> </span>
-                <span> {{ pase.etapa_actual }} </span>
-              </p>
-              <p *ngIf="pase.tipo === 'Atras'"> <span style="font-weight: 500;"> Motivo: </span> <span> {{
-                  pase.motivo.descripcion }} </span> </p>
-              <p style="margin-top: 20px;" *ngIf="pase.observacion && pase.observacion !== ''"> <span
-                  style="font-weight: 500;"> Observaciones: </span> <span> {{ pase.observacion }} </span> </p>
-              <p style="margin-top: 20px;"> <span style="font-weight: 500;"> Realizado por: </span> <span> {{
-                  pase.creatorUser.apellido }} {{
-                  pase.creatorUser.nombre }} </span> </p>
+
+
+              <div>
+                <p> <span style="font-weight: 500;"> Fecha: </span> <span> {{ pase.createdAt | fecha }} </span> </p>
+                <p style="display: flex; align-items: center;">
+                  <span> {{ pase.etapa_anterior }} </span>
+                  <span *ngIf="pase.tipo === 'Adelante'" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
+                    <mat-icon> east </mat-icon> </span>
+                  <span *ngIf="pase.tipo === 'Atras'" style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
+                    <mat-icon> west </mat-icon> </span>
+                  <span> {{ pase.etapa_actual }} </span>
+                </p>
+                <p *ngIf="pase.tipo === 'Atras'"> <span style="font-weight: 500;"> Motivo: </span> <span> {{
+                    pase.motivo.descripcion }} </span> </p>
+                <p style="margin-top: 20px;" *ngIf="pase.observacion && pase.observacion !== ''"> <span
+                    style="font-weight: 500;"> Observaciones: </span> <span> {{ pase.observacion }} </span> </p>
+                <p style="margin-top: 20px;"> <span style="font-weight: 500;"> Realizado por: </span> <span> {{
+                    pase.creatorUser.apellido }} {{
+                    pase.creatorUser.nombre }} </span> </p>
+              </div>
+
             </div>
           </div>
         </div>

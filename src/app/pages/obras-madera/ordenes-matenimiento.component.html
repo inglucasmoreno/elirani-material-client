@@ -7,7 +7,7 @@
                 <mat-card-title> OBRAS MADERA - ORDENES DE MANTENIMIENTO </mat-card-title>
                 <mat-card-subtitle> Total de elementos: {{ totalItems }} </mat-card-subtitle>
             </div>
-            <button mat-icon-button [matMenuTriggerFor]="menu_usuario" aria-label="Example icon-button with a menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu_usuario">
                 <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu_usuario="matMenu">
@@ -26,10 +26,12 @@
         <!-- Contenido de tarjeta -->
         <mat-card-content *ngIf="ordenes.length > 0" class="container-tabla">
 
-            <mat-form-field>
-                <mat-label>Buscar</mat-label>
-                <input matInput (keyup)="filtradoTabla($event)" placeholder="Ej. 1" #input>
-            </mat-form-field>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <mat-form-field style="width: 400px;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput [(ngModel)]="filtro.parametro" (keyup)="filtradoTabla($event)" placeholder="Ej. 10" #input>
+                </mat-form-field>
+            </div>
 
             <div class="material-container mat-elevation-z8">
 
@@ -49,8 +51,7 @@
                         <ng-container matColumnDef="opciones">
                             <th mat-header-cell *matHeaderCellDef> Opciones </th>
                             <td [ngClass]="{'sin-completar' : !row.precio || row.observaciones === ''}" mat-cell *matCellDef="let row">
-                                <button mat-icon-button [matMenuTriggerFor]="menu_fila"
-                                    aria-label="Example icon-button with a menu">
+                                <button mat-icon-button [matMenuTriggerFor]="menu_fila">
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
                                 <mat-menu #menu_fila="matMenu">
@@ -72,38 +73,33 @@
 
                         <!-- Columna - Numero -->
                         <ng-container matColumnDef="id">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por numero">Número</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
                             <td [ngClass]="{'sin-completar' : !row.precio || row.observaciones === ''}" mat-cell *matCellDef="let row">{{row.id}}</td>
                         </ng-container>
 
                         <!-- Columna - Fecha -->
                         <ng-container matColumnDef="fecha">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por fecha">Fecha</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
                             <td [ngClass]="{'sin-completar' : !row.precio || row.observaciones === ''}" mat-cell *matCellDef="let row">{{row.fecha | fecha}}</td>
                         </ng-container>
 
                         <!-- Columna - Obra madera -->
                         <ng-container matColumnDef="obra_madera">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por observaciones">Obra - Cliente</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Obra - Cliente</th>
                             <td [ngClass]="{'sin-completar' : !row.precio || row.observaciones === ''}" mat-cell *matCellDef="let row"> {{ (row.obra_madera.codigo | codigoMadera) + ' - ' +
                                 row.obra_madera.cliente.descripcion }} </td>
                         </ng-container>
 
                         <!-- Columna - Observaciones -->
                         <ng-container matColumnDef="observaciones">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por observaciones">Observaciones</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
                             <td [ngClass]="{'sin-completar' : !row.precio || row.observaciones === ''}" mat-cell *matCellDef="let row">{{row.observaciones ? (row.observaciones |
                                 limiteCaracteres:30 ) : 'Sin especificar'}}</td>
                         </ng-container>
 
                         <!-- Columna - Precio -->
                         <ng-container matColumnDef="precio">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header
-                                sortActionDescription="Ordenar por observaciones">Precio</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
                             <td [ngClass]="{'sin-completar' : !row.precio || row.observaciones === ''}" mat-cell *matCellDef="let row">{{ row.precio ? '$' + (row.precio | moneda) : 'Sin especificar' }}</td>
                         </ng-container>
 

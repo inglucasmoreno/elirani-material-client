@@ -55,25 +55,26 @@
       <p style="font-weight: 500;"> LISTADO DE PLACAS </p>
   
       <div (click)="eliminarPlaca(placa)" *ngFor="let placa of placas" class="container-placas">
-        <div> <span style="font-weight: 500;"> Codigo de placa: </span> {{ this.dataInput.accion === 'Crear' ? placa.tipo_placa_madera_codigo : placa.tipo_placa_madera.codigo }} </div>
-        <div> <span style="font-weight: 500;"> Tipo: </span> {{ this.dataInput.accion === 'Crear' ? placa.tipo_placa_madera_descripcion : placa.tipo_placa_madera.descripcion }} </div>
-        <div> <span style="font-weight: 500;"> Cantidad: </span> {{ placa.cantidad }} </div>
+        <img style="width: 50px;" src="assets/img/placa-madera.svg" alt="placas-madera">     
+        <div style="margin-left: 15px;">
+          <div> <span style="font-weight: 500;"> Codigo de placa: </span> {{ this.dataInput.accion === 'Crear' ? placa.tipo_placa_madera_codigo : placa.tipo_placa_madera.codigo }} </div>
+          <div> <span style="font-weight: 500;"> Tipo: </span> {{ this.dataInput.accion === 'Crear' ? placa.tipo_placa_madera_descripcion : placa.tipo_placa_madera.descripcion }} </div>
+          <div> <span style="font-weight: 500;"> Cantidad: </span> {{ placa.cantidad }} </div>
+        </div>
       </div>
     </div>
 
-
   </div>
-
 
 </div>
 
 <div class="footer-modal" mat-dialog-actions>
 
-  <button *ngIf="muebleConPlacas && showEtapa === 'Mueble'" color="primary" mat-raised-button (click)="cambiarEtapa('Placas')">
+  <button *ngIf="muebleConPlacas && showEtapa === 'Mueble' && this.dataInput.accion === 'Crear'" color="primary" mat-raised-button (click)="cambiarEtapa('Placas')">
     Continuar
   </button>
 
-  <button *ngIf="!muebleConPlacas || showEtapa === 'Placas'" (click)="this.accionFormulario()" mat-raised-button color="primary"> {{
+  <button *ngIf="!muebleConPlacas || showEtapa === 'Placas' || this.dataInput.accion === 'Editar'" (click)="this.accionFormulario()" mat-raised-button color="primary"> {{
     dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
   <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
 </div>

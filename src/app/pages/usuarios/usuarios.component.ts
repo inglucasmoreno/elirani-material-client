@@ -122,13 +122,33 @@ export class UsuariosComponent {
     dialogRef.afterClosed().subscribe(() => { this.listarUsuarios(); });
   }
 
-  filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filtradoTabla() {
+
+    const { parametro, activo } = this.filtro;
+
+    let valores = [];
+
+    // Filtrado por estado
+    if (activo !== '') {
+      valores = this.usuarios.filter(
+        (elemento: any) => (elemento.activo ? 'Alta' : 'Baja').includes(activo)
+      )
+    } else valores = this.usuarios;
+
+
+    valores = valores.filter(
+      (elemento: any) =>
+        `${elemento.apellido} ${elemento.nombre}`.toLowerCase().includes(parametro) ||
+        elemento.dni.toLowerCase().includes(parametro) ||
+        elemento.usuario.toLowerCase().includes(parametro)
+    );
+
+    this.dataSource.data = valores;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
   }
 
   ordenarTabla(sortState: any) {
@@ -150,6 +170,7 @@ export class UsuariosComponent {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
+        this.filtradoTabla();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })

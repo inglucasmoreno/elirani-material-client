@@ -18,7 +18,14 @@ import { ModalObrasMaderaComponent } from 'src/app/shared/modals/modal-obras-mad
 export class ObrasMaderaComponent {
 
   public permisosTotales = ['OBRAS_MADERA_ALL'];
-  public displayedColumns: string[] = ['opciones', 'codigo', 'cliente.descripcion', 'fecha_inicio', 'fecha_finalizacion_estimada', 'estado'];
+  public displayedColumns: string[] = [
+    'opciones',
+    'codigo',
+    'cliente.descripcion',
+    'fecha_inicio',
+    'fecha_finalizacion_estimada',
+    'estado'
+  ];
   public dataSource = new MatTableDataSource<any>();
 
   public resultsLength = 0;
@@ -26,14 +33,14 @@ export class ObrasMaderaComponent {
   public isRateLimitReached = false;
 
   // Obras
-  public obras: any = [];
+  public obras: any = [{}];
 
   // Paginacion
   public totalItems: number = 0;
 
   // Filtrado
   public filtro = {
-    activo: '',
+    estado: '',
     parametro: ''
   }
 
@@ -70,7 +77,7 @@ export class ObrasMaderaComponent {
         cliente: elemento.cliente.id,
         codigo: elemento.codigo,
         fecha_inicio: new Date(),
-        fecha_finalizacion_estimada: format(add(new Date(elemento.fecha_finalizacion_estimada), {hours: 3}), 'yyyy-MM-dd') === '1970-01-01' ? '' : elemento.fecha_finalizacion_estimada,
+        fecha_finalizacion_estimada: format(add(new Date(elemento.fecha_finalizacion_estimada), { hours: 3 }), 'yyyy-MM-dd') === '1970-01-01' ? '' : elemento.fecha_finalizacion_estimada,
         direccion: elemento.direccion,
         descripcion: elemento.descripcion,
         activo: true
@@ -101,18 +108,37 @@ export class ObrasMaderaComponent {
 
   }
 
-  filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filtradoTabla() {
+
+    const { parametro, estado } = this.filtro;
+
+    let valores = [];
+
+    // Filtrado por estado
+    if (estado !== '') {
+      valores = this.obras.filter(
+        (elemento: any) => elemento.estado === estado
+      )
+    } else valores = this.obras;
+
+    valores = valores.filter(
+      (elemento: any) =>
+        elemento.cliente.descripcion.toLowerCase().includes(parametro) ||
+        elemento.estado.toLowerCase().includes(parametro) ||
+        `MA${elemento.codigo}`.toLowerCase().includes(parametro)
+    );
+    
+    this.dataSource.data = valores;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
   }
 
   ordenarTabla(sortState: any) {
     if (sortState.direction) {
-      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction} ending`);
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
@@ -124,19 +150,20 @@ export class ObrasMaderaComponent {
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
-      activo: this.filtro.activo,
       parametro: this.filtro.parametro,
     }
 
     this.obrasMaderaService.listarObras(parametros).subscribe({
       next: ({ obras, totalItems }) => {
         this.obras = obras;
+        console.log(obras);
         this.totalItems = totalItems;
         this.resultsLength = totalItems;
         this.dataSource.data = obras;
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
+        this.filtradoTabla();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })

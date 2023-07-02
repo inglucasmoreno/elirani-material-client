@@ -26,10 +26,21 @@
         <!-- Contenido de tarjeta -->
         <mat-card-content *ngIf="tipos.length > 0" class="container-tabla">
 
-            <mat-form-field>
-                <mat-label>Buscar</mat-label>
-                <input matInput (keyup)="filtradoTabla($event)" placeholder="Ej. Aluminio" #input>
-            </mat-form-field>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <mat-form-field style="width: 400px;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput [(ngModel)]="filtro.parametro" (keyup)="filtradoTabla()" placeholder="Ej. BG0002" #input>
+                </mat-form-field>
+                
+                <mat-form-field style="width: 400px; margin-left: 10px;">
+                    <mat-label> Estado </mat-label>
+                    <mat-select (selectionChange)="filtradoTabla()" [(ngModel)]="filtro.activo">
+                      <mat-option value="">Todos</mat-option>
+                      <mat-option value="Alta">Activo</mat-option>
+                      <mat-option value="Baja">Inactivo</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
             <div class="material-container mat-elevation-z8">
 
@@ -48,8 +59,7 @@
                         <ng-container matColumnDef="opciones">
                             <th mat-header-cell *matHeaderCellDef> Opciones </th>
                             <td mat-cell *matCellDef="let row">
-                                <button mat-icon-button [matMenuTriggerFor]="menu_fila"
-                                    aria-label="Example icon-button with a menu">
+                                <button mat-icon-button [matMenuTriggerFor]="menu_fila">
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
                                 <mat-menu #menu_fila="matMenu">
@@ -63,7 +73,7 @@
 
                         <!-- Columna: Codigo -->
                         <ng-container matColumnDef="codigo">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear mat-sort-header sortActionDescription="Ordenar por codigo">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear mat-sort-header>
                                 Código
                             </th>
                             <td mat-cell *matCellDef="let row">{{row.codigo}}</td>
@@ -71,19 +81,19 @@
 
                         <!-- Columna - Descripcion -->
                         <ng-container matColumnDef="descripcion">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por descripcion">Descripción</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
                             <td mat-cell *matCellDef="let row">{{row.descripcion}}</td>
                         </ng-container>
 
                         <!-- Columna - Fecha de creacion -->
                         <ng-container matColumnDef="createdAt">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por fecha">Fecha de creación</th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de creación</th>
                             <td mat-cell *matCellDef="let row">{{row.createdAt | fecha}}</td>
                         </ng-container>
 
                         <!-- Columna - Estado -->
                         <ng-container matColumnDef="activo">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Ordenar por estado"> Estado </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
                             <td mat-cell *matCellDef="let row">{{row.activo ? 'Activo' : 'Inactivo' }}</td>
                         </ng-container>
 

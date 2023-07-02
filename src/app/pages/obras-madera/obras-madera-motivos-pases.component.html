@@ -26,10 +26,21 @@
         <!-- Contenido de tarjeta -->
         <mat-card-content *ngIf="motivos.length > 0" class="container-tabla">
 
-            <mat-form-field>
-                <mat-label>Buscar</mat-label>
-                <input matInput (keyup)="filtradoTabla($event)" placeholder="Ej. Por falta de materiales" #input>
-            </mat-form-field>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <mat-form-field style="width: 400px;">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput [(ngModel)]="filtro.parametro" (keyup)="filtradoTabla()" placeholder="Ej. Por falta de materiales" #input>
+                </mat-form-field>
+                
+                <mat-form-field style="width: 400px; margin-left: 10px;">
+                    <mat-label> Estado </mat-label>
+                    <mat-select (selectionChange)="filtradoTabla()" [(ngModel)]="filtro.activo">
+                      <mat-option value="">Todos</mat-option>
+                      <mat-option value="Alta">Activo</mat-option>
+                      <mat-option value="Baja">Inactivo</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
             <div class="material-container mat-elevation-z8">
 

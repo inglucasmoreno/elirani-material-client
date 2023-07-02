@@ -91,9 +91,27 @@ export class TiposMueblesComponent {
 
   }
 
-  filtradoTabla(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filtradoTabla() {
+
+    const { parametro, activo } = this.filtro;
+
+    let valores = [];
+
+    // Filtrado por estado
+    if(activo !== ''){
+      valores = this.tipos.filter(
+        (elemento: any) => (elemento.activo ? 'Alta' : 'Baja').includes(activo) 
+      )       
+    }else valores = this.tipos;
+
+
+    valores = valores.filter(
+      (elemento: any) =>
+        elemento.descripcion.toLowerCase().includes(parametro) ||
+        (elemento.placas ? 'Con placas' : 'Sin placas').toLowerCase().includes(parametro)
+    );
+
+    this.dataSource.data = valores;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -114,7 +132,6 @@ export class TiposMueblesComponent {
     const parametros = {
       direccion: this.ordenar.direccion,
       columna: this.ordenar.columna,
-      activo: this.filtro.activo,
       parametro: this.filtro.parametro,
     }
 
@@ -127,6 +144,7 @@ export class TiposMueblesComponent {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
+        this.filtradoTabla();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
