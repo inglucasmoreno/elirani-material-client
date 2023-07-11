@@ -19,7 +19,6 @@ export class ObrasMaderaComponent {
 
   public permisosTotales = ['OBRAS_MADERA_ALL'];
   public displayedColumns: string[] = [
-    'opciones',
     'codigo',
     'cliente.descripcion',
     'fecha_inicio',

@@ -14,6 +14,7 @@ import { ObrasMaderaService } from 'src/app/services/obras-madera.service';
 })
 export class ModalObrasMaderaComponent {
 
+  public estadoModal: 'Obra' | 'Cliente' = 'Obra'
   public clientes: any[] = [];
 
   public dataOutput = {
@@ -24,6 +25,16 @@ export class ModalObrasMaderaComponent {
     fecha_finalizacion_estimada: '',
     direccion: '',
     descripcion: '',
+    activo: true
+  }
+
+  public formCliente = {
+    id: 0,
+    descripcion: '',
+    tipo_identificacion: 'DNI',
+    identificacion: '',
+    telefono: '',
+    direccion: '',
     activo: true
   }
 
@@ -52,7 +63,8 @@ export class ModalObrasMaderaComponent {
     })
   }
 
-  // Nueva obra
+  // - OBRA
+
   crearObra(): void {
 
     const { codigo, cliente, fecha_inicio, direccion } = this.dataOutput;
@@ -95,7 +107,7 @@ export class ModalObrasMaderaComponent {
     this.alertService.loading();
 
     this.obrasMaderaService.nuevaObra(data).subscribe({
-      next: ({obra}) => {
+      next: ({ obra }) => {
         this.dialogRef.close();
         this.router.navigateByUrl(`/dashboard/obras-madera/detalles/${obra.id}`)
       }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -148,6 +160,66 @@ export class ModalObrasMaderaComponent {
         this.dialogRef.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
+  }
+
+  accionFormularioObra(): void {
+    if(this.dataInput.accion === 'Crear') this.crearObra();
+    else if(this.dataInput.accion === 'Editar') this.actualizarObra();
+  }
+
+  // - CLIENTES
+
+  crearCliente(): void {
+
+    const { descripcion, telefono } = this.formCliente;
+
+    // Verificar: Descripcion
+    if (descripcion.trim() === '') {
+      this.alertService.info('Debe colocar un nombre o razon social');
+      return;
+    }
+
+    // Verificar: Telefono
+    if (telefono.trim() === '') {
+      this.alertService.info('Debe colocar un número de teléfono');
+      return;
+    }
+
+    const data = {
+      ...this.formCliente,
+      creatorUser: this.authService.usuario.userId,
+      updatorUser: this.authService.usuario.userId,
+    }
+
+    this.alertService.loading();
+
+    this.clientesService.nuevoCliente(data).subscribe({
+      next: ({ cliente }) => {
+        this.clientes.unshift(cliente);
+        this.dataOutput.cliente = cliente.id;
+        this.reiniciarFormularioClientes();
+        this.cambiarEstadoModal('Obra');
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  reiniciarFormularioClientes(): void {
+    this.formCliente = {
+      id: 0,
+      descripcion: '',
+      tipo_identificacion: 'DNI',
+      identificacion: '',
+      telefono: '',
+      direccion: '',
+      activo: true
+    }
+  }
+
+  // Cambio de estado - Formulario
+
+  cambiarEstadoModal(estado: 'Obra' | 'Cliente'): void {
+    this.estadoModal = estado;
   }
 
 }

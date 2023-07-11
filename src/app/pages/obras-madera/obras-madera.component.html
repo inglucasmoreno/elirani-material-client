@@ -58,59 +58,39 @@
           <table mat-table [dataSource]="dataSource" class="example-table" (matSortChange)="ordenarTabla($event)"
             matSort>
 
-            <!-- Columna - Opciones -->
-            <ng-container matColumnDef="opciones">
-              <th mat-header-cell *matHeaderCellDef> Opciones </th>
-              <td mat-cell *matCellDef="let row">
-                <button mat-icon-button [matMenuTriggerFor]="menu_fila">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu_fila="matMenu">
-                  <button *appPermisos="permisosTotales" (click)="openModal('Editar', row)" mat-menu-item>
-                    <mat-icon> edit </mat-icon>
-                    <span> Editar </span>
-                  </button>
-                  <button [routerLink]="['/dashboard/obras-madera/detalles/', row.id]" mat-menu-item>
-                    <mat-icon> home_work </mat-icon>
-                    <span> Detalles </span>
-                  </button>
-                </mat-menu>   
-              </td>
-            </ng-container>
-
             <!-- Columna - Codigo -->
             <ng-container matColumnDef="codigo">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 Codigo </th>
-              <td mat-cell *matCellDef="let row">{{row.codigo | codigoMadera}}</td>
+              <td [routerLink]="['/dashboard/obras-madera/detalles', row.id]" mat-cell *matCellDef="let row">{{row.codigo | codigoMadera}}</td>
             </ng-container>
 
             <!-- Columna - Placas -->
             <ng-container matColumnDef="cliente.descripcion">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente
               </th>
-              <td mat-cell *matCellDef="let row">{{row.cliente.descripcion}}</td>
+              <td [routerLink]="['/dashboard/obras-madera/detalles', row.id]" mat-cell *matCellDef="let row">{{row.cliente.descripcion}}</td>
             </ng-container>
 
             <!-- Columna - Fecha de inicio -->
             <ng-container matColumnDef="fecha_inicio">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Inicio
               </th>
-              <td mat-cell *matCellDef="let row">{{row.fecha_inicio | fecha}}</td>
+              <td [routerLink]="['/dashboard/obras-madera/detalles', row.id]" mat-cell *matCellDef="let row">{{row.fecha_inicio | fecha}}</td>
             </ng-container>
 
             <!-- Columna - Fecha de colocacion -->
             <ng-container matColumnDef="fecha_finalizacion_estimada">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Colocación (Estimada)
               </th>
-              <td mat-cell *matCellDef="let row">{{row.fecha_finalizacion_estimada | fecha}}</td>
+              <td [routerLink]="['/dashboard/obras-madera/detalles', row.id]" mat-cell *matCellDef="let row">{{row.fecha_finalizacion_estimada | fecha}}</td>
             </ng-container>
 
             <!-- Columna - Estado -->
             <ng-container matColumnDef="estado">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado
               </th>
-              <td mat-cell *matCellDef="let row">{{row.estado }}</td>
+              <td [routerLink]="['/dashboard/obras-madera/detalles', row.id]" mat-cell *matCellDef="let row">{{row.estado }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -1,47 +1,114 @@
-<h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nueva obra' : 'Editando obra' }} </h1>
 
-<div class="modal-body" mat-dialog-content>
+<!-- OBRA -->
 
-  <ng-select [(ngModel)]="dataOutput.cliente" class="custom-ng-select" placeholder="Cliente">
-    <ng-option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.descripcion }} </ng-option>
-  </ng-select>
+<div *ngIf="estadoModal === 'Obra'">
+  
+  <h1 mat-dialog-title> {{ dataInput.accion === 'Crear' ? 'Nueva obra' : 'Editando obra' }}</h1>
+  
+  <div class="modal-body" mat-dialog-content>
 
-  <mat-form-field>
-    <mat-label> <span style="color: red"> * </span> Número de obra </mat-label>
-    <input [(ngModel)]="dataOutput.codigo" (keyup.enter)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()" [(ngModel)]="dataOutput.codigo"
-      matInput #input placeholder="Ej. 1">
-  </mat-form-field>
+    <div style="display: flex;">
+      <ng-select [(ngModel)]="dataOutput.cliente" style="width: 100%;" class="custom-ng-select" placeholder="Cliente">
+        <ng-option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.descripcion }} </ng-option>
+      </ng-select>
+      <button (click)="cambiarEstadoModal('Cliente')" title="Nuevo cliente" style="margin-top: 10px;" mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
 
-  <mat-form-field>
-    <mat-label> <span style="color: red"> * </span> Fecha de inicio </mat-label>
-    <input [(ngModel)]="dataOutput.fecha_inicio" disabled matInput [matDatepicker]="fecha_inicio">
-    <mat-datepicker-toggle matIconSuffix [for]="fecha_inicio"></mat-datepicker-toggle>
-    <mat-datepicker #fecha_inicio></mat-datepicker>
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Número de obra </mat-label>
+      <input [(ngModel)]="dataOutput.codigo"
+        (keyup.enter)="accionFormularioObra()" [(ngModel)]="dataOutput.codigo"
+        matInput #input placeholder="Ej. 1">
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label> Fecha de colocación </mat-label>
-    <input [(ngModel)]="dataOutput.fecha_finalizacion_estimada" matInput [matDatepicker]="fecha_colocacion">
-    <mat-datepicker-toggle matIconSuffix [for]="fecha_colocacion"></mat-datepicker-toggle>
-    <mat-datepicker #fecha_colocacion></mat-datepicker>
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Fecha de inicio </mat-label>
+      <input [(ngModel)]="dataOutput.fecha_inicio" disabled matInput [matDatepicker]="fecha_inicio">
+      <mat-datepicker-toggle matIconSuffix [for]="fecha_inicio"></mat-datepicker-toggle>
+      <mat-datepicker #fecha_inicio></mat-datepicker>
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label> <span style="color: red"> * </span> Direccion </mat-label>
-    <input [(ngModel)]="dataOutput.direccion" (keyup.enter)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()"
-      [(ngModel)]="dataOutput.direccion" matInput #input placeholder="Ej. Pringles 539">
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label> Fecha de colocación </mat-label>
+      <input [(ngModel)]="dataOutput.fecha_finalizacion_estimada" matInput [matDatepicker]="fecha_colocacion">
+      <mat-datepicker-toggle matIconSuffix [for]="fecha_colocacion"></mat-datepicker-toggle>
+      <mat-datepicker #fecha_colocacion></mat-datepicker>
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label> Observaciones </mat-label>
-    <input [(ngModel)]="dataOutput.descripcion" (keyup.enter)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()"
-      [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Observaciones no obligatorias">
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Direccion </mat-label>
+      <input [(ngModel)]="dataOutput.direccion"
+        (keyup.enter)="accionFormularioObra()" [(ngModel)]="dataOutput.direccion"
+        matInput #input placeholder="Ej. Pringles 539">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label> Observaciones </mat-label>
+      <input [(ngModel)]="dataOutput.descripcion"
+        (keyup.enter)="accionFormularioObra()"
+        [(ngModel)]="dataOutput.descripcion" matInput #input placeholder="Ej. Observaciones no obligatorias">
+    </mat-form-field>
+
+  </div>
+
+  <div class="footer-modal" mat-dialog-actions>
+    <button (click)="accionFormularioObra()" mat-raised-button color="primary">
+      {{
+      dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
+    <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+  </div>
 
 </div>
 
-<div class="footer-modal" mat-dialog-actions>
-  <button (click)="dataInput.accion === 'Crear' ? crearObra() : actualizarObra()" mat-raised-button color="primary"> {{
-    dataInput.accion === 'Crear' ? 'Crear' : 'Actualizar' }} </button>
-  <button mat-raised-button color="warn" mat-dialog-close> Cerrar </button>
+<!-- CLIENTE -->
+
+<div *ngIf="estadoModal === 'Cliente'">
+
+  <h1 mat-dialog-title> Nuevo cliente </h1>
+
+
+  <div class="modal-body" mat-dialog-content>
+
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Nombre o Razon social </mat-label>
+      <input (keyup.enter)="crearCliente()" [(ngModel)]="formCliente.descripcion" matInput #input
+        placeholder="Ej. Equinoccio Technology">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Tipo de identificación </mat-label>
+      <mat-select [(ngModel)]="formCliente.tipo_identificacion">
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="CUIL">CUIL</mat-option>
+        <mat-option value="CUIT">CUIT</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label> Identificación </mat-label>
+      <input (keyup.enter)="crearCliente()" [(ngModel)]="formCliente.identificacion" matInput #input
+        placeholder="Ej. 24340603989">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label> <span style="color: red"> * </span> Telefono </mat-label>
+      <input (keyup.enter)="crearCliente()" [(ngModel)]="formCliente.telefono" matInput #input
+        placeholder="Ej. 2664869642">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label> Direccion </mat-label>
+      <input (keyup.enter)="crearCliente()" [(ngModel)]="formCliente.direccion" matInput #input
+        placeholder="Ej. Portugal 1030">
+    </mat-form-field>
+
+  </div>
+
+  <div class="footer-modal" mat-dialog-actions>
+    <button (click)="crearCliente()" mat-raised-button color="primary"> Crear cliente </button>
+    <button mat-raised-button color="warn" (click)="cambiarEstadoModal('Obra')"> Regresar </button>
+  </div>
+
 </div>

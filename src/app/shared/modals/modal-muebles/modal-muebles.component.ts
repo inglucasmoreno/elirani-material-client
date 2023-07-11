@@ -14,6 +14,7 @@ import { MueblesPlacasService } from '../../../services/muebles-placas.service';
 })
 export class ModalMueblesComponent {
 
+  public estadoForm: 'Mueble' | 'TipoMueble' | 'TipoPlaca' = 'Mueble';
   public tipos_muebles: any[] = [];
   public tipos_placas: any[] = [];
   public tipoSeleccionado: any = null;
@@ -29,6 +30,20 @@ export class ModalMueblesComponent {
     precio: null,
     observaciones: '',
     placas: [],
+  }
+
+  public formTipoMueble = {
+    id: 0,
+    descripcion: '',
+    placas: true,
+    activo: true
+  }
+
+  public formTipoPlaca = {
+    id: 0,
+    codigo: '',
+    descripcion: '',
+    activo: true
   }
 
   public dataPlacaTipo = {
@@ -69,13 +84,15 @@ export class ModalMueblesComponent {
     })
   }
 
+  // - MUEBLE
+
   // Nuevo mueble
   crearMueble(): void {
 
     // Verificacion
     const { correcto, message } = this.verificacionDatos();
-    
-    if(!correcto) {
+
+    if (!correcto) {
       this.alertService.info(message);
       return;
     }
@@ -126,8 +143,8 @@ export class ModalMueblesComponent {
 
     // Verificacion
     const { correcto, message } = this.verificacionDatos();
-    
-    if(!correcto) {
+
+    if (!correcto) {
       this.alertService.info(message);
       return;
     }
@@ -205,27 +222,27 @@ export class ModalMueblesComponent {
       this.alertService.question({ msg: `Agregando placa`, buttonText: 'Agregar' })
         .then(({ isConfirmed }: any) => {
           if (isConfirmed) {
-            
+
             this.alertService.loading();
-            
+
             const data = {
               mueble: this.dataOutput.id,
               tipo_placa_madera: this.dataPlacaTipo.id,
               cantidad: this.dataPlacaTipo.cantidad,
               creatorUser: this.authService.usuario.userId,
               updatorUser: this.authService.usuario.userId
-            }; 
-            
+            };
+
             this.mueblesPlacasService.nuevaRelacion(data).subscribe({
               next: ({ relacion }) => {
 
                 this.placas.unshift(relacion);
-              
+
                 this.dataPlacaTipo.id = null;
                 this.dataPlacaTipo.cantidad = null;
 
                 this.alertService.close();
-              
+
               }, error: ({ error }) => this.alertService.errorApi(error.message)
             })
           }
@@ -259,7 +276,7 @@ export class ModalMueblesComponent {
 
   eliminarPlaca(placa: any): void {
 
-    if(this.placas.length === 1){
+    if (this.placas.length === 1) {
       this.alertService.info('El mueble no puede quedar sin placas');
       return;
     }
@@ -273,7 +290,7 @@ export class ModalMueblesComponent {
             this.alertService.loading();
             this.mueblesPlacasService.eliminarRelacion(placa.id).subscribe({
               next: () => {
-                
+
                 // this.placas = this.placas.filter(elemento => elemento.id !== placa.id);
 
                 const indice = this.placas.findIndex(elemento => elemento.id === placa.id);
@@ -290,21 +307,21 @@ export class ModalMueblesComponent {
   // Accion - Formulario
   accionFormulario(): void {
 
-    if(this.dataInput.accion === 'Crear' && !this.muebleConPlacas){
+    if (this.dataInput.accion === 'Crear' && !this.muebleConPlacas) {
       this.crearMueble();
-    }else if(this.dataInput.accion === 'Crear' && this.muebleConPlacas && this.showEtapa === 'Mueble'){
+    } else if (this.dataInput.accion === 'Crear' && this.muebleConPlacas && this.showEtapa === 'Mueble') {
       this.cambiarEtapa('Placas');
-    }else if(this.dataInput.accion === 'Crear' && this.muebleConPlacas && this.showEtapa === 'Placas'){
+    } else if (this.dataInput.accion === 'Crear' && this.muebleConPlacas && this.showEtapa === 'Placas') {
       this.crearMueble();
-    }else if(this.dataInput.accion === 'Editar') {
+    } else if (this.dataInput.accion === 'Editar') {
       this.actualizarMueble();
     }
-    
+
   }
 
   // Verificacion
   verificacionDatos(): { correcto: boolean, message: string } {
-    
+
     const { tipo_mueble, precio } = this.dataOutput;
 
     // Verificacion: Tipo de mueble
@@ -326,6 +343,98 @@ export class ModalMueblesComponent {
 
     return { correcto: true, message: 'Todo correcto' };
 
+  }
+
+  // - TIPO MUEBLE
+
+  crearTipoMueble(): void {
+
+    const { descripcion } = this.formTipoMueble;
+
+    // Verificar: Descripcion
+    if (descripcion.trim() === '') {
+      this.alertService.info('Debe colocar una descripción');
+      return;
+    }
+
+    const data = {
+      ...this.formTipoMueble,
+      creatorUser: this.authService.usuario.userId,
+      updatorUser: this.authService.usuario.userId,
+    }
+
+    this.alertService.loading();
+
+    this.tiposMueblesService.nuevoTipo(data).subscribe({
+      next: ({ tipo }) => {
+        this.tipos_muebles.unshift(tipo);
+        this.muebleConPlacas = data.placas;
+        this.dataOutput.tipo_mueble = tipo.id;
+        this.reiniciarFormularioTipoMueble();
+        this.estadoForm = 'Mueble';
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  reiniciarFormularioTipoMueble(): void {
+    this.formTipoMueble = {
+      id: 0,
+      descripcion: '',
+      placas: true,
+      activo: true
+    }
+  }
+
+
+  // - TIPO PLACA
+
+  crearTipoPlaca(): void {
+
+    const { codigo, descripcion } = this.formTipoPlaca;
+
+    // Verificar: Codigo
+    if (codigo.trim() === '') {
+      this.alertService.info('Debe colocar un código');
+      return;
+    }
+
+    // Verificar: Descripcion
+    if (descripcion.trim() === '') {
+      this.alertService.info('Debe colocar una descripción');
+      return;
+    }
+
+    const data = {
+      ...this.formTipoPlaca,
+      creatorUser: this.authService.usuario.userId,
+      updatorUser: this.authService.usuario.userId,
+    }
+
+    this.alertService.loading();
+
+    this.tiposPlacasMaderaService.nuevoTipo(data).subscribe({
+      next: ({tipo}) => {
+        this.tipos_placas.unshift(tipo);
+        this.dataPlacaTipo.id = tipo.id;
+        this.reiniciarFormularioTipoPlaca();
+        this.estadoForm = 'Mueble';
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  reiniciarFormularioTipoPlaca(): void {
+    this.formTipoPlaca = {
+      id: 0,
+      codigo: '',
+      descripcion: '',
+      activo: true
+    }
+  }
+
+  cambiarEstado(estado: 'Mueble' | 'TipoMueble' | 'TipoPlaca'): void {
+    this.estadoForm = estado;
   }
 
 
